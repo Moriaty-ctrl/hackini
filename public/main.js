@@ -4,6 +4,26 @@ import { registerUser, loginUser, logoutUser, getCurrentUserData, setupAuthListe
 import { getLeaderboard, joinChallenge, setupChallengeListeners } from "./database.js"
 import { doc, updateDoc } from "firebase/firestore"
 
+// Debug information
+console.log("Main.js loaded")
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded")
+  console.log("Login button exists:", !!loginBtn)
+  console.log("Login submit button exists:", !!loginSubmit)
+
+  // Force show the auth status for testing
+  if (authStatus) {
+    authStatus.style.display = "block"
+    authStatus.textContent = "Auth status element is working"
+    authStatus.className = "auth-success"
+
+    // Hide after 3 seconds
+    setTimeout(() => {
+      authStatus.style.display = "none"
+    }, 3000)
+  }
+})
+
 // DOM Elements
 const loginBtn = document.getElementById("loginBtn")
 const loginModal = document.getElementById("loginModal")
@@ -38,20 +58,31 @@ window.addEventListener("click", (e) => {
   }
 })
 
+// Replace the login functionality section with this improved version
 // Login functionality
 loginSubmit?.addEventListener("click", async () => {
-  const email = emailInput.value
-  const password = passwordInput.value
+  const email = emailInput?.value
+  const password = passwordInput?.value
 
-  const result = await loginUser(email, password)
+  if (!email || !password) {
+    showAuthStatus("Please enter both email and password", false)
+    return
+  }
 
-  if (result.success) {
-    showAuthStatus("Login successful!", true)
-    setTimeout(() => {
-      loginModal.style.display = "none"
-    }, 1000)
-  } else {
-    showAuthStatus("Login failed: " + result.error, false)
+  try {
+    const result = await loginUser(email, password)
+
+    if (result.success) {
+      showAuthStatus("Login successful!", true)
+      setTimeout(() => {
+        loginModal.style.display = "none"
+      }, 1000)
+    } else {
+      showAuthStatus("Login failed: " + result.error, false)
+    }
+  } catch (error) {
+    console.error("Login error:", error)
+    showAuthStatus("Login failed: " + (error.message || "Unknown error"), false)
   }
 })
 

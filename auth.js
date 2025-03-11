@@ -29,14 +29,22 @@ import {
   };
   
   // Login user
+  import { signInWithEmailAndPassword } from "firebase/auth"
+  import { auth } from "./firebase"
+  
+  // Modify the loginUser function to add more debugging
   export const loginUser = async (email, password) => {
+    console.log("Login attempt with:", email)
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      return { success: true };
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      console.log("Login successful:", userCredential.user.uid)
+      return { success: true }
     } catch (error) {
-      return { success: false, error: error.message };
+      console.error("Login error in auth.js:", error.code, error.message)
+      return { success: false, error: error.message }
     }
-  };
+  }
+  
   
   // Logout user
   export const logoutUser = async () => {

@@ -341,6 +341,28 @@
     <!-- Correct order -->
     <script type="module" src="firebase.js"></script>
     <script type="module" src="main.js"></script>
+
+    <!-- Add this debugging button at the bottom of the body to test auth status -->
+    <button id="testAuthStatus" style="position: fixed; bottom: 10px; right: 10px; background: var(--accent-red); color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+      Test Auth Status
+    </button>
+
+    <script>
+      document.getElementById('testAuthStatus')?.addEventListener('click', function() {
+        const authStatus = document.getElementById('auth-status');
+        if (authStatus) {
+          authStatus.textContent = 'Auth status test';
+          authStatus.style.display = 'block';
+          authStatus.className = 'auth-success';
+          
+          setTimeout(() => {
+            authStatus.style.display = 'none';
+          }, 3000);
+        } else {
+          alert('Auth status element not found!');
+        }
+      });
+    </script>
 </body>
 </html>
 

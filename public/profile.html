@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Hackini</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">Hackini</div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="profile.html" class="nav-link">Profile</a>
+                <a href="#" id="logoutBtn" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="profile">
+        <h1>User Profile</h1>
+        <div id="profile-info">
+            <p><strong>Email:</strong> <span id="profile-email"></span></p>
+            <p><strong>Display Name:</strong> <span id="profile-displayName"></span></p>
+            <p><strong>Score:</strong> <span id="profile-score"></span></p>
+            <p><strong>Challenges Joined:</strong> <span id="profile-challenges"></span></p>
+        </div>
+
+        <h2>Edit Profile</h2>
+        <form id="edit-profile-form">
+            <div class="form-group">
+                <label for="edit-displayName">Display Name</label>
+                <input type="text" id="edit-displayName" placeholder="Enter your display name">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </section>
+
+    <script src="main.js"></script>
+</body>
+</html>

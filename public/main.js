@@ -198,3 +198,47 @@ import {
   document.addEventListener('DOMContentLoaded', function() {
     loadLeaderboard();
   });
+  // Load profile data
+async function loadProfile() {
+  const user = auth.currentUser;
+  if (!user) {
+      window.location.href = "index.html"; // Redirect to login if not authenticated
+      return;
+  }
+
+  const userData = await getCurrentUserData();
+  if (userData) {
+      document.getElementById("profile-email").textContent = userData.email;
+      document.getElementById("profile-displayName").textContent = userData.displayName;
+      document.getElementById("profile-score").textContent = userData.score;
+      document.getElementById("profile-challenges").textContent = userData.challenges?.join(", ") || "None";
+  }
+}
+
+// Load profile data when the page loads
+document.addEventListener("DOMContentLoaded", loadProfile);
+// Update profile data
+document.getElementById("edit-profile-form").addEventListener("submit", async function (e) {
+  e.preventDefault();
+
+  const user = auth.currentUser;
+  if (!user) {
+      showAuthStatus("You must be logged in to update your profile.", false);
+      return;
+  }
+
+  const newDisplayName = document.getElementById("edit-displayName").value;
+
+  try {
+      // Update Firestore document
+      await db.collection("users").doc(user.uid).update({
+          displayName: newDisplayName,
+      });
+
+      // Update UI
+      document.getElementById("profile-displayName").textContent = newDisplayName;
+      showAuthStatus("Profile updated successfully!", true);
+  } catch (error) {
+      showAuthStatus("Error updating profile: " + error.message, false);
+  }
+});

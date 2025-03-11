@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Challenges - CyberDojo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <style>
+        .challenges-hero {
+            background: linear-gradient(135deg, rgba(var(--accent-red-rgb), 0.1) 0%, transparent 100%);
+            padding: var(--spacing-xl) 5%;
+            text-align: center;
+        }
+        
+        .challenges-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .challenges-hero h1 {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .challenges-hero p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto var(--spacing-xl);
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 3rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
+        .challenges-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5% var(--spacing-xxl);
+        }
+        
+        .challenges-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+        
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: var(--spacing-xl);
+            gap: var(--spacing-xs);
+        }
+        
+        .page-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .page-item:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        
+        .page-item.active {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+        }
+        
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .sort-dropdown {
+            position: relative;
+        }
+        
+        .sort-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .sort-btn:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        
+        .sort-dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            min-width: 180px;
+            z-index: 10;
+            display: none;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .sort-dropdown-content.show {
+            display: block;
+        }
+        
+        .sort-option {
+            padding: var(--spacing-sm) var(--spacing-md);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+        
+        .sort-option:hover {
+            background-color: rgba(var(--accent-red-rgb), 0.05);
+            color: var(--accent-red);
+        }
+        
+        .sort-option.active {
+            color: var(--accent-red);
+            font-weight: 500;
+        }
+        
+        .sort-option:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        @media (max-width: 768px) {
+            .challenges-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-group {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: var(--spacing-xs);
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">
+                        <i class="ph-house"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="challenges.html" class="nav-link active">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="leaderboard.html" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="docs.html" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="profile.html" class="nav-link">
+                        <i class="ph-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" id="loginBtn" class="nav-link login-btn">
+                        <i class="ph-sign-in"></i>
+                        <span>Login</span>
+                    </a>
+                    <div id="userProfile" class="user-profile">
+                        <div class="avatar" id="userAvatar"></div>
+                        <span id="userName"></span>
+                        <i class="ph-caret-down"></i>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="ph-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="challenges.html" class="mobile-nav-link active">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="leaderboard.html" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="docs.html" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-link">
+                <i class="ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" id="mobileLoginBtn" class="mobile-nav-link">
+                <i class="ph-sign-in"></i>
+                <span>Login</span>
+            </a>
+        </div>
+
+        <section class="challenges-hero">
+            <div class="challenges-hero-content">
+                <h1>Security <span class="accent">Challenges</span></h1>
+                <p>Test your skills with our collection of real-world cybersecurity challenges</p>
+                <div class="search-container">
+                    <i class="ph-magnifying-glass search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search challenges...">
+                </div>
+            </div>
+        </section>
+
+        <div class="challenges-container">
+            <div class="challenges-header">
+                <div class="filter-group">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Web</button>
+                    <button class="filter-btn">Network</button>
+                    <button class="filter-btn">Crypto</button>
+                    <button class="filter-btn">Forensics</button>
+                    <button class="filter-btn">Reverse Engineering</button>
+                </div>
+                <div class="filter-group">
+                    <button class="filter-btn">All Levels</button>
+                    <button class="filter-btn">Easy</button>
+                    <button class="filter-btn">Medium</button>
+                    <button class="filter-btn">Hard</button>
+                </div>
+                <div class="sort-dropdown">
+                    <button class="sort-btn" id="sortBtn">
+                        <span>Sort By: Newest</span>
+                        <i class="ph-caret-down"></i>
+                    </button>
+                    <div class="sort-dropdown-content" id="sortDropdown">
+                        <div class="sort-option active">Newest</div>
+                        <div class="sort-option">Oldest</div>
+                        <div class="sort-option">Most Popular</div>
+                        <div class="sort-option">Highest Points</div>
+                        <div class="sort-option">Completion Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenges-grid">
+                <div class="project-card">
+                    <div class="card-badge web">Web</div>
+                    <div class="card-header">
+                        <h3>E-Commerce Platform</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Medium</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Find vulnerabilities in the payment gateway system and exploit authentication weaknesses.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span>15</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>250</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 65%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="ecommerce">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge network">Network</div>
+                    <div class="card-header">
+                        <h3>Social Media API</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Hard</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Test for authentication bypass vulnerabilities and find ways to access protected endpoints.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span>8</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>400</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 25%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="social">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge crypto">Crypto</div>
+                    <div class="card-header">
+                        <h3>Blockchain Wallet</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Easy</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Identify vulnerabilities in the wallet's transaction signing process and key management.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span>22</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>150</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 85%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="blockchain">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge web">Web</div>
+                    <div class="card-header">
+                        <h3>Banking Portal</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Hard</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Discover and exploit vulnerabilities in a simulated banking portal with multiple security layers.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span>12</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>500</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 15%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="banking">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge forensics">Forensics</div>
+                    <div class="card-header">
+                        <h3>Data Recovery</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Medium</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Recover deleted files and extract hidden information from a compromised system.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span>18</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>300</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 45%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="forensics">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge reverse">Reverse Engineering</div>
+                    <div class="card-header">
+                        <h3>Binary Analysis</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Hard</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Reverse engineer a compiled binary to find vulnerabilities and bypass security measures.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span>7</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>450</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 10%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="binary">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <div class="page-item disabled">
+                    <i class="ph-caret-left"></i>
+                </div>
+                <div class="page-item active">1</div>
+                <div class="page-item">2</div>
+                <div class="page-item">3</div>
+                <div class="page-item">...</div>
+                <div class="page-item">10</div>
+                <div class="page-item">
+                    <i class="ph-caret-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                        <div class="newsletter">
+                            <h3>Subscribe to our newsletter</h3>
+                            <div class="newsletter-form">
+                                <input type="email" placeholder="Enter your email">
+                                <button class="btn btn-primary">Subscribe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome Back</h2>
+                <button class="close">&times;</button>
+            </div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="register">Register</button>
+            </div>
+            <div class="tab-content" id="login-tab">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-icon">
+                        <i class="ph-envelope"></i>
+                        <input type="email" id="email" placeholder="Enter your email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-icon">
+                        <i class="ph-lock"></i>
+                        <input type="password" id="password" placeholder="Enter your password">
+                    </div>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+                <button id="loginSubmit" class="btn btn-primary btn-block">Login</button>
+                <div class="social-login">
+                    <p>Or continue with</p>
+                    <div class="social-buttons">
+                        <button class="social-btn google">
+                            <i class="ph-google-logo"></i>
+                            Google
+                        </button>
+                        <button class="social-btn github">
+                            <i class="ph-github-logo"></i>
+                            GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content hidden" id="register-tab">
+                <div class="form-group">
+                    <label for="reg-name">Username</label>
+                    <div class="input-icon">
+                        <i class="ph-user"></i>
+                        <input type="text" id="reg-name" placeholder="Choose a username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <div class="input-icon">
+                        <i class="ph-envelope"></i>
+                        <input type="email" id="reg-email" placeholder="Enter your email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <div class="input-icon">
+                        <i class="ph-lock"></i>
+                        <input type="password" id="reg-password" placeholder="Create a password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm">Confirm Password</label>
+                    <div class="input-icon">
+                        <i class="ph-lock"></i>
+                        <input type="password" id="reg-confirm" placeholder="Confirm your password">
+                    </div>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                </div>
+                <button id="registerBtn" class="btn btn-primary btn-block">Create Account</button>
+                <div class="social-login">
+                    <p>Or register with</p>
+                    <div class="social-buttons">
+                        <button class="social-btn google">
+                            <i class="ph-google-logo"></i>
+                            Google
+                        </button>
+                        <button class="social-btn github">
+                            <i class="ph-github-logo"></i>
+                            GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="auth-status"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Scripts -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="main.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sort dropdown
+            const sortBtn = document.getElementById('sortBtn');
+            const sortDropdown = document.getElementById('sortDropdown');
+            
+            sortBtn.addEventListener('click', function() {
+                sortDropdown.classList.toggle('show');
+            });
+            
+            // Close the dropdown when clicking outside
+            window.addEventListener('click', function(event) {
+                if (!event.target.matches('.sort-btn') && !event.target.matches('.sort-btn *')) {
+                    if (sortDropdown.classList.contains('show')) {
+                        sortDropdown.classList.remove('show');
+                    }
+                }
+            });
+            
+            // Sort options
+            const sortOptions = document.querySelectorAll('.sort-option');
+            
+            sortOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    sortOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    
+                    // Update sort button text
+                    const sortText = this.textContent;
+                    sortBtn.querySelector('span').textContent = 'Sort By: ' + sortText;
+                    
+                    // Close dropdown
+                    sortDropdown.classList.remove('show');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>E-Commerce Platform Challenge - CyberDojo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <style>
+        .challenge-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 5%;
+        }
+        
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-xl);
+            gap: var(--spacing-xl);
+        }
+        
+        .challenge-info {
+            flex: 1;
+        }
+        
+        .challenge-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .challenge-title h1 {
+            margin-bottom: 0;
+        }
+        
+        .challenge-badge {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .challenge-badge.web {
+            background-color: var(--web-color);
+        }
+        
+        .challenge-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .challenge-stats {
+            flex-shrink: 0;
+            width: 300px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+        }
+        
+        .stat-value {
+            font-weight: 500;
+        }
+        
+        .challenge-actions {
+            margin-top: var(--spacing-lg);
+        }
+        
+        .challenge-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xxl);
+        }
+        
+        .challenge-description {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .description-section {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .description-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .description-section h3 {
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .description-section h3 i {
+            color: var(--accent-red);
+        }
+        
+        .description-section ul {
+            padding-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .description-section li {
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .challenge-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .sidebar-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .sidebar-card h3 {
+            margin-bottom: var(--spacing-md);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .sidebar-card h3 i {
+            color: var(--accent-red);
+        }
+        
+        .hint-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .hint-item {
+            padding: var(--spacing-md);
+            background-color: var(--primary-bg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .hint-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .hint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hint-title {
+            font-weight: 500;
+        }
+        
+        .hint-cost {
+            font-size: 0.8rem;
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .hint-content {
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+            display: none;
+        }
+        
+        .hint-content.show {
+            display: block;
+        }
+        
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .leaderboard-item:hover {
+            background-color: rgba(var(--accent-red-rgb), 0.05);
+        }
+        
+        .leaderboard-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: var(--spacing-sm);
+        }
+        
+        .leaderboard-rank.top {
+            background-color: var(--accent-red);
+            color: white;
+        }
+        
+        .leaderboard-user {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .leaderboard-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--accent-red);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: var(--spacing-sm);
+        }
+        
+        .leaderboard-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .leaderboard-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .code-block {
+            background-color: #1a1a1a;
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        .code-block code {
+            color: #e0e0e0;
+        }
+        
+        .terminal-block {
+            background-color: #1a1a1a;
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .terminal-block .prompt {
+            color: #64d9ef;
+        }
+        
+        .terminal-block .command {
+            color: #e0e0e0;
+        }
+        
+        .terminal-block .output {
+            color: #a0a0a0;
+        }
+        
+        .resources-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .resource-item:hover {
+            background-color: rgba(var(--accent-red-rgb), 0.05);
+        }
+        
+        .resource-icon {
+            color: var(--accent-red);
+            font-size: 1.2rem;
+        }
+        
+        .resource-info {
+            flex: 1;
+        }
+        
+        .resource-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .resource-type {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 1024px) {
+            .challenge-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .challenge-header {
+                flex-direction: column;
+            }
+            
+            .challenge-stats {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">
+                        <i class="ph-house"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="challenges.html" class="nav-link active">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="leaderboard.html" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="docs.html" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="profile.html" class="nav-link">
+                        <i class="ph-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" id="loginBtn" class="nav-link login-btn">
+                        <i class="ph-sign-in"></i>
+                        <span>Login</span>
+                    </a>
+                    <div id="userProfile" class="user-profile">
+                        <div class="avatar" id="userAvatar"></div>
+                        <span id="userName"></span>
+                        <i class="ph-caret-down"></i>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="ph-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="challenges.html" class="mobile-nav-link active">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="leaderboard.html" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="docs.html" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-link">
+                <i class="ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" id="mobileLoginBtn" class="mobile-nav-link">
+                <i class="ph-sign-in"></i>
+                <span>Login</span>
+            </a>
+        </div>
+
+        <div class="challenge-container">
+            <div class="challenge-header">
+                <div class="challenge-info">
+                    <div class="challenge-title">
+                        <h1>E-Commerce Platform</h1>
+                        <div class="challenge-badge web">Web</div>
+                    </div>
+                    <div class="challenge-meta">
+                        <div class="meta-item">
+                            <i class="ph-calendar"></i>
+                            <span>Added 2 months ago</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="ph-users"></i>
+                            <span>15 Hackers</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="ph-check-circle"></i>
+                            <span>8 Completions</span>
+                        </div>
+                    </div>
+                    <p>Find vulnerabilities in the payment gateway system and exploit authentication weaknesses in this simulated e-commerce platform.</p>
+                </div>
+                <div class="challenge-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Difficulty</div>
+                        <div class="stat-value">Medium</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Points</div>
+                        <div class="stat-value">250</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Category</div>
+                        <div class="stat-value">Web Security</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Estimated Time</div>
+                        <div class="stat-value">3-5 hours</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Success Rate</div>
+                        <div class="stat-value">53%</div>
+                    </div>
+                    <div class="challenge-actions">
+                        <button class="btn btn-primary btn-block">Start Challenge</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="challenge-content">
+                <div class="challenge-description">
+                    <div class="description-section">
+                        <h3><i class="ph-info"></i> Overview</h3>
+                        <p>You've been hired to perform a security assessment of a new e-commerce platform before it goes live. The platform includes user authentication, product browsing, shopping cart functionality, and a payment processing system.</p>
+                        <p>Your goal is to identify and exploit vulnerabilities in the application, with a focus on the payment gateway integration and authentication mechanisms.</p>
+                    </div>
+                    
+                    <div class="description-section">
+                        <h3><i class="ph-target"></i> Objectives</h3>
+                        <ul>
+                            <li>Find and exploit authentication bypass vulnerabilities</li>
+                            <li>Identify vulnerabilities in the payment processing system</li>
+                            <li>Access administrative functions without proper authorization</li>
+                            <li>Extract sensitive customer information from the database</li>
+                            <li>Manipulate product prices during checkout</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="description-section">
+                        <h3><i class="ph-desktop"></i> Environment</h3>
+                        <p>You'll be provided with access to a virtual environment containing the e-commerce application. The application is built using a modern web stack:</p>
+                        <ul>
+                            <li>Frontend: React.js</li>
+                            <li>Backend: Node.js with Express</li>
+                            <li>Database: MongoDB</li>
+                            <li>Payment Processing: Stripe API integration</li>
+                        </ul>
+                        <p>The application is accessible at the following URL once you start the challenge:</p>
+                        <div class="code-block">
+                            <code>https://ecommerce-challenge.cyberdojo.io/[your-session-id]</code>
+                        </div>
+                    </div>
+                    
+                    <div class="description-section">
+                        <h3><i class="ph-terminal"></i> Getting Started</h3>
+                        <p>Once you start the challenge, you'll receive credentials for a basic user account:</p>
+                        <div class="terminal-block">
+                            <div><span class="prompt">Username:</span> <span class="command">user@example.com</span></div>
+                            <div><span class="prompt">Password:</span> <span class="command">password123</span></div>
+                        </div>
+                        <p>You can use these credentials to log in and explore the application. Your goal is to escalate your privileges and find ways to exploit the system.</p>
+                        <p>Here's a basic command to test the API endpoint:</p>
+                        <div class="terminal-block">
+                            <div><span class="prompt">$</span> <span class="command">curl -X GET https://ecommerce-challenge.cyberdojo.io/[your-session-id]/api/products</span></div>
+                            <div class="output">[
+  {
+    "id": "prod_001",
+    "name": "Premium Headphones",
+    "price": 199.99,
+    "description": "High-quality wireless headphones with noise cancellation"
+  },
+  {
+    "id": "prod_002",
+    "name": "Smartphone Case",
+    "price": 29.99,
+    "description": "Durable protective case for smartphones"
+  },
+  ...
+]</div>
+                        </div>
+                    </div>
+                    
+                    <div class="description-section">
+                        <h3><i class="ph-flag"></i> Submission</h3>
+                        <p>To complete this challenge, you need to:</p>
+                        <ol>
+                            <li>Find at least 3 distinct vulnerabilities in the application</li>
+                            <li>Document your findings, including the vulnerability type, impact, and exploitation method</li>
+                            <li>Provide proof of successful exploitation (screenshots, code snippets, etc.)</li>
+                            <li>Submit your findings through the challenge submission form</li>
+                        </ol>
+                        <p>Your submission will be reviewed by our team, and points will be awarded based on the severity of the vulnerabilities you discover and the quality of your documentation.</p>
+                    </div>
+                </div>
+                
+                <div class="challenge-sidebar">
+                    <div class="sidebar-card">
+                        <h3><i class="ph-lightbulb"></i> Hints</h3>
+                        <div class="hint-list">
+                            <div class="hint-item">
+                                <div class="hint-header">
+                                    <div class="hint-title">Authentication Hint</div>
+                                    <div class="hint-cost"><i class="ph-coin"></i> 25 points</div>
+                                </div>
+                                <div class="hint-content">
+                                    Check for insecure JWT implementation and token validation issues. Look for ways to manipulate or forge tokens.
+                                </div>
+                            </div>
+                            <div class="hint-item">
+                                <div class="hint-header">
+                                    <div class="hint-title">Payment Processing Hint</div>
+                                    <div class="hint-cost"><i class="ph-coin"></i> 50 points</div>
+                                </div>
+                                <div class="hint-content">
+                                    The payment processing system might not properly validate the price data sent from the client. Try intercepting and modifying requests during checkout.
+                                </div>
+                            </div>
+                            <div class="hint-item">
+                                <div class="hint-header">
+                                    <div class="hint-title">Admin Access Hint</div>
+                                    <div class="hint-cost"><i class="ph-coin"></i> 75 points</div>
+                                </div>
+                                <div class="hint-content">
+                                    The application might have hidden admin endpoints that are not properly secured. Try directory enumeration and check for common admin paths.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-card">
+                        <h3><i class="ph-trophy"></i> Leaderboard</h3>
+                        <div class="leaderboard-list">
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank top">1</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">AH</div>
+                                    <div class="leaderboard-name">AliceHacker</div>
+                                </div>
+                                <div class="leaderboard-time">1h 23m</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank top">2</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">BS</div>
+                                    <div class="leaderboard-name">BobSecurity</div>
+                                </div>
+                                <div class="leaderboard-time">1h 45m</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank top">3</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">CH</div>
+                                    <div class="leaderboard-name">CharliePwn</div>
+                                </div>
+                                <div class="leaderboard-time">2h 12m</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank">4</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">DH</div>
+                                    <div class="leaderboard-name">DaveHack</div>
+                                </div>
+                                <div class="leaderboard-time">2h 34m</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank">5</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">ES</div>
+                                    <div class="leaderboard-name">EveScript</div>
+                                </div>
+                                <div class="leaderboard-time">2h 51m</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-card">
+                        <h3><i class="ph-book-open"></i> Resources</h3>
+                        <div class="resources-list">
+                            <div class="resource-item">
+                                <div class="resource-icon">
+                                    <i class="ph-article"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <div class="resource-title">OWASP Top 10 Web Vulnerabilities</div>
+                                    <div class="resource-type">Article</div>
+                                </div>
+                            </div>
+                            <div class="resource-item">
+                                <div class="resource-icon">
+                                    <i class="ph-video"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <div class="resource-title">Web Authentication Bypass Techniques</div>
+                                    <div class="resource-type">Video Tutorial</div>
+                                </div>
+                            </div>
+                            <div class="resource-item">
+                                <div class="resource-icon">
+                                    <i class="ph-file-code"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <div class="resource-title">Payment Gateway Security Testing</div>
+                                    <div class="resource-type">Guide</div>
+                                </div>
+                            </div>
+                            <div class="resource-item">
+                                <div class="resource-icon">
+                                    <i class="ph-tool"></i>
+                                </div>
+                                <div class="resource-info">
+                                    <div class="resource-title">Burp Suite Tutorial</div>
+                                    <div class="resource-type">Tool Guide</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="main.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hint toggle
+            const hintItems = document.querySelectorAll('.hint-item');
+            
+            hintItems.forEach(item => {
+                const header = item.querySelector('.hint-header');
+                const content = item.querySelector('.hint-content');
+                
+                header.addEventListener('click', function() {
+                    content.classList.toggle('show');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

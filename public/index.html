@@ -1,334 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>CyberDojo - Security Testing Arena</title>
-    <style>
-        /* CSS Variables */
-        :root {
-            --primary-bg: #0a0a0a;
-            --secondary-bg: #1a1a1a;
-            --accent-red: #ff1a1a;
-            --text-primary: #e0e0e0;
-            --text-secondary: #909090;
-        }
-
-        /* Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: rgba(10, 10, 10, 0.95);
-            padding: 1rem 5%;
-            border-bottom: 2px solid var(--accent-red);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-red);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: var(--accent-red);
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 70vh;
-            background: linear-gradient(45deg, rgba(255, 26, 26, 0.1), transparent);
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-        }
-
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, #ff1a1a, #ff4d4d);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        @supports not (background-clip: text) {
-            .hero h1 {
-                color: var(--accent-red);
-                background: none;
-            }
-        }
-
-        .terminal-text {
-            font-family: 'Courier New', monospace;
-            color: var(--accent-red);
-            border-left: 3px solid var(--accent-red);
-            padding-left: 1rem;
-            margin: 2rem 0;
-        }
-
-        /* Projects Grid */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 4rem 5%;
-        }
-
-        .project-card {
-            background: var(--secondary-bg);
-            border-radius: 8px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 26, 26, 0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-red);
-        }
-
-        .project-status {
-            color: var(--accent-red);
-            font-weight: 500;
-            margin-bottom: 1rem;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: var(--accent-red);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #cc0000;
-        }
-
-        /* Leaderboard */
-        .leaderboard {
-            background: var(--secondary-bg);
-            padding: 2rem;
-            margin: 2rem 5%;
-            border-radius: 8px;
-        }
-
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 26, 26, 0.1);
-        }
-
-        /* Login Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.7);
-        }
-
-        .modal-content {
-            background-color: var(--secondary-bg);
-            margin: 10% auto;
-            padding: 2rem;
-            border: 1px solid var(--accent-red);
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-        }
-
-        .close {
-            color: var(--text-secondary);
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover {
-            color: var(--accent-red);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #333;
-            background: #111;
-            color: var(--text-primary);
-            border-radius: 4px;
-        }
-
-        #auth-status {
-            margin-top: 1rem;
-            padding: 0.5rem;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .auth-success {
-            background: rgba(0, 128, 0, 0.2);
-            color: #4caf50;
-        }
-
-        .auth-error {
-            background: rgba(255, 0, 0, 0.2);
-            color: #f44336;
-        }
-
-        /* User profile section */
-        .user-profile {
-            display: none;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent-red);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-content">
-            <div class="logo">CyberDojo</div>
-            <div class="nav-links">
-                <a href="#" class="nav-link">Challenges</a>
-                <a href="#" class="nav-link">Leaderboard</a>
-                <a href="#" class="nav-link">Docs</a>
-                <a href="profile.html" class="nav-link">Profile</a>
-                <a href="#" id="loginBtn" class="nav-link">Login</a>
-                <div id="userProfile" class="user-profile">
-                    <div class="avatar" id="userAvatar"></div>
-                    <span id="userName"></span>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link active">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="profile.html" class="nav-link">
+                        <i class="ph-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" id="loginBtn" class="nav-link login-btn">
+                        <i class="ph-sign-in"></i>
+                        <span>Login</span>
+                    </a>
+                    <div id="userProfile" class="user-profile">
+                        <div class="avatar" id="userAvatar"></div>
+                        <span id="userName"></span>
+                        <i class="ph-caret-down"></i>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#" class="mobile-nav-link active">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-link">
+                <i class="ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" id="mobileLoginBtn" class="mobile-nav-link">
+                <i class="ph-sign-in"></i>
+                <span>Login</span>
+            </a>
+        </div>
+
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Hack. Learn. <span class="accent">Secure.</span></h1>
+                    <p class="hero-subtitle">Master cybersecurity through real-world challenges</p>
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-button"></div>
+                            <div class="terminal-button"></div>
+                            <div class="terminal-button"></div>
+                            <div class="terminal-title">cyberdojo@secure:~</div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="terminal-line">$ <span class="terminal-command">sudo ./start_training.sh</span></div>
+                            <div class="terminal-line">Initializing secure environment...</div>
+                            <div class="terminal-line">Loading challenges...</div>
+                            <div class="terminal-line">Ready. Welcome to the cybersecurity proving grounds.</div>
+                            <div class="terminal-line blink">$ <span class="cursor">_</span></div>
+                        </div>
+                    </div>
+                    <div class="hero-buttons">
+                        <button id="startTestingBtn" class="btn btn-primary">
+                            <i class="ph-play"></i>
+                            Start Training
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="ph-info"></i>
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="/placeholder.svg?height=400&width=400" alt="Cybersecurity illustration">
                 </div>
             </div>
-        </div>
-    </nav>
+        </section>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Hack. Learn. Secure.</h1>
-            <div class="terminal-text">
-                > Welcome to the cybersecurity proving grounds
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="ph-users-three"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">2,500+</div>
+                    <div class="stat-label">Active Hackers</div>
+                </div>
             </div>
-            <button id="startTestingBtn" class="btn btn-primary">Start Testing</button>
-        </div>
-    </section>
-
-    <section class="projects-grid">
-        <div class="project-card">
-            <h3>E-Commerce Platform</h3>
-            <div class="project-status">Active • <span id="ecommerce-hackers">15</span> Hackers Testing</div>
-            <p>Find vulnerabilities in the payment gateway system</p>
-            <button class="btn btn-primary join-challenge" data-challenge="ecommerce" style="margin-top: 1rem;">Join Challenge</button>
-        </div>
-
-        <div class="project-card">
-            <h3>Social Media API</h3>
-            <div class="project-status">Active • <span id="social-hackers">8</span> Hackers Testing</div>
-            <p>Test for authentication bypass vulnerabilities</p>
-            <button class="btn btn-primary join-challenge" data-challenge="social" style="margin-top: 1rem;">Join Challenge</button>
-        </div>
-    </section>
-
-    <section class="leaderboard">
-        <h2>Top Hackers</h2>
-        <div id="leaderboard-content">
-            <!-- Leaderboard items will be loaded from Firebase -->
-            <div class="leaderboard-item">
-                <span>Loading leaderboard data...</span>
-                <span></span>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="ph-bug"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">15,000+</div>
+                    <div class="stat-label">Vulnerabilities Found</div>
+                </div>
             </div>
-        </div>
-    </section>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="ph-medal"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Challenges Completed</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="challenges-section">
+            <div class="section-header">
+                <h2>Active Challenges</h2>
+                <div class="filter-controls">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Web</button>
+                    <button class="filter-btn">Network</button>
+                    <button class="filter-btn">Crypto</button>
+                </div>
+            </div>
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="card-badge web">Web</div>
+                    <div class="card-header">
+                        <h3>E-Commerce Platform</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Medium</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Find vulnerabilities in the payment gateway system and exploit authentication weaknesses.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span id="ecommerce-hackers">15</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>250</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 65%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="ecommerce">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge network">Network</div>
+                    <div class="card-header">
+                        <h3>Social Media API</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Hard</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                                <span class="filled"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Test for authentication bypass vulnerabilities and find ways to access protected endpoints.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span id="social-hackers">8</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>400</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 25%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="social">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-badge crypto">Crypto</div>
+                    <div class="card-header">
+                        <h3>Blockchain Wallet</h3>
+                        <div class="difficulty">
+                            <span class="difficulty-label">Easy</span>
+                            <div class="difficulty-meter">
+                                <span class="filled"></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Identify vulnerabilities in the wallet's transaction signing process and key management.</p>
+                    <div class="card-stats">
+                        <div class="stat">
+                            <i class="ph-users"></i>
+                            <span id="blockchain-hackers">22</span> Hackers
+                        </div>
+                        <div class="stat">
+                            <i class="ph-coin"></i>
+                            <span>150</span> Points
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 85%"></div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary join-challenge" data-challenge="blockchain">Join Challenge</button>
+                        <button class="btn btn-icon">
+                            <i class="ph-info"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-more">
+                <button class="btn btn-outline">
+                    View All Challenges
+                    <i class="ph-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="leaderboard-section">
+            <div class="section-header">
+                <h2>Top Hackers</h2>
+                <div class="time-filter">
+                    <button class="time-btn active">Weekly</button>
+                    <button class="time-btn">Monthly</button>
+                    <button class="time-btn">All Time</button>
+                </div>
+            </div>
+            
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <span>Rank</span>
+                    <span>Hacker</span>
+                    <span>Challenges</span>
+                    <span>Points</span>
+                </div>
+                <div id="leaderboard-content">
+                    <!-- Leaderboard items will be loaded from Firebase -->
+                    <div class="leaderboard-item">
+                        <div class="rank">1</div>
+                        <div class="user-info">
+                            <div class="user-avatar">JD</div>
+                            <div class="user-name">JohnDoe</div>
+                        </div>
+                        <div class="challenges-count">24</div>
+                        <div class="points">3,450</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="rank">2</div>
+                        <div class="user-info">
+                            <div class="user-avatar">AH</div>
+                            <div class="user-name">AliceHacker</div>
+                        </div>
+                        <div class="challenges-count">22</div>
+                        <div class="points">3,120</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="rank">3</div>
+                        <div class="user-info">
+                            <div class="user-avatar">BS</div>
+                            <div class="user-name">BobSecurity</div>
+                        </div>
+                        <div class="challenges-count">19</div>
+                        <div class="points">2,890</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-more">
+                <button class="btn btn-outline">
+                    View Full Leaderboard
+                    <i class="ph-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to test your skills?</h2>
+                <p>Join our community of security professionals and ethical hackers to improve your skills and earn recognition.</p>
+                <button class="btn btn-primary btn-large">
+                    <i class="ph-user-plus"></i>
+                    Create Free Account
+                </button>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                        <div class="newsletter">
+                            <h3>Subscribe to our newsletter</h3>
+                            <div class="newsletter-form">
+                                <input type="email" placeholder="Enter your email">
+                                <button class="btn btn-primary">Subscribe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Login / Register</h2>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your email">
+            <div class="modal-header">
+                <h2>Welcome Back</h2>
+                <button class="close">&times;</button>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password">
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="register">Register</button>
             </div>
-            <button id="loginSubmit" class="btn btn-primary">Login</button>
-            <button id="registerBtn" class="btn" style="background: transparent; border: 1px solid var(--accent-red); color: var(--accent-red); margin-left: 10px;">Register</button>
-            
+            <div class="tab-content" id="login-tab">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-icon">
+                        <i class="ph-envelope"></i>
+                        <input type="email" id="email" placeholder="Enter your email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-icon">
+                        <i class="ph-lock"></i>
+                        <input type="password" id="password" placeholder="Enter your password">
+                    </div>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+                <button id="loginSubmit" class="btn btn-primary btn-block">Login</button>
+                <div class="social-login">
+                    <p>Or continue with</p>
+                    <div class="social-buttons">
+                        <button class="social-btn google">
+                            <i class="ph-google-logo"></i>
+                            Google
+                        </button>
+                        <button class="social-btn github">
+                            <i class="ph-github-logo"></i>
+                            GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content hidden" id="register-tab">
+                <div class="form-group">
+                    <label for="reg-name">Username</label>
+                    <div class="input-icon">
+                        <i class="ph-user"></i>
+                        <input type="text" id="reg-name" placeholder="Choose a username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <div class="input-icon">
+                        <i class="ph-envelope"></i>
+                        <input type="email" id="reg-email" placeholder="Enter your email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <div class="input-icon">
+                        <i class="ph-lock"></i>
+                        <input type="password" id="reg-password" placeholder="Create a password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm">Confirm Password</label>
+                    <div class="input-icon">
+                        <i class="ph-lock"></i>
+                        <input type="password" id="reg-confirm" placeholder="Confirm your password">
+                    </div>
+                </div>
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                </div>
+                <button id="registerBtn" class="btn btn-primary btn-block">Create Account</button>
+                <div class="social-login">
+                    <p>Or register with</p>
+                    <div class="social-buttons">
+                        <button class="social-btn google">
+                            <i class="ph-google-logo"></i>
+                            Google
+                        </button>
+                        <button class="social-btn github">
+                            <i class="ph-github-logo"></i>
+                            GitHub
+                        </button>
+                    </div>
+                </div>
+            </div>
             <div id="auth-status"></div>
         </div>
     </div>
@@ -338,31 +498,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     
-    <!-- Correct order -->
+    <!-- Scripts -->
     <script type="module" src="firebase.js"></script>
     <script type="module" src="main.js"></script>
-
-    <!-- Add this debugging button at the bottom of the body to test auth status -->
-    <button id="testAuthStatus" style="position: fixed; bottom: 10px; right: 10px; background: var(--accent-red); color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-      Test Auth Status
-    </button>
-
-    <script>
-      document.getElementById('testAuthStatus')?.addEventListener('click', function() {
-        const authStatus = document.getElementById('auth-status');
-        if (authStatus) {
-          authStatus.textContent = 'Auth status test';
-          authStatus.style.display = 'block';
-          authStatus.className = 'auth-success';
-          
-          setTimeout(() => {
-            authStatus.style.display = 'none';
-          }, 3000);
-        } else {
-          alert('Auth status element not found!');
-        }
-      });
-    </script>
+    <script src="ui.js"></script>
 </body>
 </html>
 

@@ -28,7 +28,6 @@ import {
     }
   };
   
-  // Login user
   import { signInWithEmailAndPassword } from "firebase/auth"
   import { auth } from "./firebase"
   
@@ -44,6 +43,8 @@ import {
       return { success: false, error: error.message }
     }
   }
+  
+  
   
   
   // Logout user

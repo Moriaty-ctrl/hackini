@@ -1,157 +1,708 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile - Hackini</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>User Profile - CyberDojo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
     <style>
-        :root {
-            --primary-bg: #0a0a0a;
-            --secondary-bg: #1a1a1a;
-            --accent-red: #ff1a1a;
-            --text-primary: #e0e0e0;
-            --text-secondary: #909090;
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--spacing-xl);
         }
-
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
+        
+        .profile-sidebar {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
         }
-
-        .navbar {
-            background: rgba(10, 10, 10, 0.95);
-            padding: 1rem 5%;
-            border-bottom: 2px solid var(--accent-red);
+        
+        .profile-main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
         }
-
-        .nav-content {
+        
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .profile-email {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+        
+        .profile-stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-red);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .profile-nav {
+            margin-top: var(--spacing-lg);
+        }
+        
+        .profile-nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md);
+            color: var(--text-secondary);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xs);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .profile-nav-item:hover, .profile-nav-item.active {
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            color: var(--accent-red);
+        }
+        
+        .profile-nav-item i {
+            font-size: 1.2rem;
+        }
+        
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .profile-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: var(--spacing-lg);
         }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent-red);
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: var(--accent-red);
-        }
-
-        .profile {
-            padding: 2rem 5%;
-            max-width: 800px;
-            margin: 2rem auto;
-            background: var(--secondary-bg);
-            border-radius: 8px;
-            padding: 2rem;
-            border: 1px solid rgba(255, 26, 26, 0.3);
-        }
-
-        .profile h1, .profile h2 {
-            color: var(--accent-red);
-        }
-
-        #profile-info p {
+        
+        .profile-card-title {
             font-size: 1.2rem;
-            margin: 0.5rem 0;
+            font-weight: 600;
+            margin-bottom: 0;
         }
-
-        #profile-info strong {
+        
+        .profile-section {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .profile-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-secondary);
+        }
+        
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: var(--spacing-md);
+        }
+        
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .badge-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .badge-icon i {
+            font-size: 1.8rem;
             color: var(--accent-red);
         }
-
-        #edit-profile-form {
-            margin-top: 1rem;
+        
+        .badge-name {
+            font-size: 0.9rem;
+            font-weight: 500;
         }
-
-        .form-group {
-            margin-bottom: 1.5rem;
+        
+        .badge-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
+        
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
         }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #333;
-            background: #111;
-            color: var(--text-primary);
-            border-radius: 4px;
+        
+        .challenge-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            background-color: var(--primary-bg);
+            transition: transform var(--transition-fast);
         }
-
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        
+        .challenge-item:hover {
+            transform: translateX(5px);
         }
-
-        .btn-primary {
-            background: var(--accent-red);
-            color: white;
+        
+        .challenge-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .btn-primary:hover {
-            background: #cc0000;
+        
+        .challenge-icon i {
+            font-size: 1.5rem;
+            color: var(--accent-red);
+        }
+        
+        .challenge-info {
+            flex: 1;
+        }
+        
+        .challenge-name {
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .challenge-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .challenge-meta span {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .challenge-status {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-in-progress {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--info-color);
+        }
+        
+        .edit-profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+        
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .edit-profile-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-content">
-            <div class="logo">Hackini</div>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="profile.html" class="nav-link">Profile</a>
-                <a href="#" id="logoutBtn" class="nav-link">Logout</a>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="profile.html" class="nav-link active">
+                        <i class="ph-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" id="logoutBtn" class="nav-link">
+                        <i class="ph-sign-out"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-link active">
+                <i class="ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" id="mobileLogoutBtn" class="mobile-nav-link">
+                <i class="ph-sign-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="userAvatar">JD</div>
+                    <h2 class="profile-name" id="profile-displayName">John Doe</h2>
+                    <p class="profile-email" id="profile-email">john@example.com</p>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="stat-value" id="profile-score">1,250</div>
+                            <div class="stat-label">Points</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Challenges</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Badges</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-nav">
+                    <div class="profile-nav-item active" data-tab="overview">
+                        <i class="ph-chart-bar"></i>
+                        <span>Overview</span>
+                    </div>
+                    <div class="profile-nav-item" data-tab="challenges">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </div>
+                    <div class="profile-nav-item" data-tab="badges">
+                        <i class="ph-medal"></i>
+                        <span>Badges</span>
+                    </div>
+                    <div class="profile-nav-item" data-tab="settings">
+                        <i class="ph-gear"></i>
+                        <span>Settings</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-main">
+                <div class="profile-tab active" id="overview-tab">
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">Activity Overview</h3>
+                            <div class="time-filter">
+                                <button class="time-btn active">Week</button>
+                                <button class="time-btn">Month</button>
+                                <button class="time-btn">Year</button>
+                            </div>
+                        </div>
+                        <div style="height: 200px; background-color: var(--primary-bg); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);"></div>
+                        <div class="profile-section">
+                            <h4 class="profile-section-title">Recent Activity</h4>
+                            <div class="challenge-list">
+                                <div class="challenge-item">
+                                    <div class="challenge-icon">
+                                        <i class="ph-check-circle"></i>
+                                    </div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-name">E-Commerce Platform</div>
+                                        <div class="challenge-meta">
+                                            <span><i class="ph-calendar"></i> 2 days ago</span>
+                                            <span><i class="ph-coin"></i> 250 points</span>
+                                        </div>
+                                    </div>
+                                    <div class="challenge-status status-completed">Completed</div>
+                                </div>
+                                <div class="challenge-item">
+                                    <div class="challenge-icon">
+                                        <i class="ph-hourglass"></i>
+                                    </div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-name">Social Media API</div>
+                                        <div class="challenge-meta">
+                                            <span><i class="ph-calendar"></i> 5 days ago</span>
+                                            <span><i class="ph-coin"></i> 400 points</span>
+                                        </div>
+                                    </div>
+                                    <div class="challenge-status status-in-progress">In Progress</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">Latest Achievements</h3>
+                            <a href="#" class="btn btn-outline btn-sm">View All</a>
+                        </div>
+                        <div class="badge-grid">
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-rocket"></i>
+                                </div>
+                                <div class="badge-name">First Blood</div>
+                                <div class="badge-date">3 days ago</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-bug"></i>
+                                </div>
+                                <div class="badge-name">Bug Hunter</div>
+                                <div class="badge-date">1 week ago</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-lightning"></i>
+                                </div>
+                                <div class="badge-name">Quick Solver</div>
+                                <div class="badge-date">2 weeks ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-tab" id="challenges-tab">
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">My Challenges</h3>
+                            <div class="filter-controls">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">Completed</button>
+                                <button class="filter-btn">In Progress</button>
+                            </div>
+                        </div>
+                        <div class="challenge-list" id="profile-challenges">
+                            <!-- Challenge items will be loaded from Firebase -->
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-check-circle"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">E-Commerce Platform</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-calendar"></i> 2 days ago</span>
+                                        <span><i class="ph-coin"></i> 250 points</span>
+                                    </div>
+                                </div>
+                                <div class="challenge-status status-completed">Completed</div>
+                            </div>
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-hourglass"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Social Media API</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-calendar"></i> 5 days ago</span>
+                                        <span><i class="ph-coin"></i> 400 points</span>
+                                    </div>
+                                </div>
+                                <div class="challenge-status status-in-progress">In Progress</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-tab" id="badges-tab">
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">My Badges</h3>
+                            <div class="filter-controls">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">Technical</button>
+                                <button class="filter-btn">Achievement</button>
+                            </div>
+                        </div>
+                        <div class="badge-grid">
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-rocket"></i>
+                                </div>
+                                <div class="badge-name">First Blood</div>
+                                <div class="badge-date">3 days ago</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-bug"></i>
+                                </div>
+                                <div class="badge-name">Bug Hunter</div>
+                                <div class="badge-date">1 week ago</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-lightning"></i>
+                                </div>
+                                <div class="badge-name">Quick Solver</div>
+                                <div class="badge-date">2 weeks ago</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-trophy"></i>
+                                </div>
+                                <div class="badge-name">Top 10</div>
+                                <div class="badge-date">3 weeks ago</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-shield"></i>
+                                </div>
+                                <div class="badge-name">Defender</div>
+                                <div class="badge-date">1 month ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-tab" id="settings-tab">
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">Edit Profile</h3>
+                        </div>
+                        <form id="edit-profile-form" class="edit-profile-form">
+                            <div class="form-group">
+                                <label for="edit-displayName">Display Name</label>
+                                <div class="input-icon">
+                                    <i class="ph-user"></i>
+                                    <input type="text" id="edit-displayName" placeholder="Enter your display name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-email">Email</label>
+                                <div class="input-icon">
+                                    <i class="ph-envelope"></i>
+                                    <input type="email" id="edit-email" placeholder="Enter your email" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-location">Location</label>
+                                <div class="input-icon">
+                                    <i class="ph-map-pin"></i>
+                                    <input type="text" id="edit-location" placeholder="Enter your location">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-website">Website</label>
+                                <div class="input-icon">
+                                    <i class="ph-globe"></i>
+                                    <input type="url" id="edit-website" placeholder="Enter your website">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-full">
+                                <label for="edit-bio">Bio</label>
+                                <textarea id="edit-bio" rows="4" placeholder="Tell us about yourself" class="input-icon" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--border-color); background-color: var(--primary-bg); color: var(--text-primary); border-radius: var(--radius-md);"></textarea>
+                            </div>
+                            <div class="form-group form-group-full">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <h3 class="profile-card-title">Account Settings</h3>
+                        </div>
+                        <div class="form-group">
+                            <label for="change-password">Change Password</label>
+                            <div class="input-icon">
+                                <i class="ph-lock"></i>
+                                <input type="password" id="change-password" placeholder="Enter new password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <div class="input-icon">
+                                <i class="ph-lock"></i>
+                                <input type="password" id="confirm-password" placeholder="Confirm new password">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Update Password</button>
+                        
+                        <div class="profile-section" style="margin-top: var(--spacing-xl);">
+                            <h4 class="profile-section-title">Danger Zone</h4>
+                            <button class="btn btn-outline" style="color: var(--danger-color); border-color: var(--danger-color);">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <section class="profile">
-        <h1>User Profile</h1>
-        <div id="profile-info">
-            <p><strong>Email:</strong> <span id="profile-email"></span></p>
-            <p><strong>Display Name:</strong> <span id="profile-displayName"></span></p>
-            <p><strong>Score:</strong> <span id="profile-score"></span></p>
-            <p><strong>Challenges Joined:</strong> <span id="profile-challenges"></span></p>
-        </div>
-
-        <h2>Edit Profile</h2>
-        <form id="edit-profile-form">
-            <div class="form-group">
-                <label for="edit-displayName">Display Name</label>
-                <input type="text" id="edit-displayName" placeholder="Enter your display name">
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </form>
-    </section>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
 
-    <!-- Correct order -->
-<script type="module" src="firebase.js"></script>
-<script type="module" src="main.js"></script>
+    <div id="auth-status"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Scripts -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="main.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile tab navigation
+            const navItems = document.querySelectorAll('.profile-nav-item');
+            const tabs = document.querySelectorAll('.profile-tab');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all nav items and tabs
+                    navItems.forEach(item => item.classList.remove('active'));
+                    tabs.forEach(tab => tab.classList.remove('active'));
+                    
+                    // Add active class to clicked nav item and corresponding tab
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Initialize Phosphor Icons
+            if (typeof PhosphorIcons !== 'undefined') {
+                PhosphorIcons.replace();
+            }
+        });
+    </script>
 </body>
 </html>
+

@@ -5,33 +5,21 @@ import { getLeaderboard, joinChallenge, setupChallengeListeners } from "./databa
 import { doc, updateDoc } from "firebase/firestore"
 
 // Debug information
-console.log("Main.js loaded")
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM fully loaded")
-  console.log("Login button exists:", !!loginBtn)
-  console.log("Login submit button exists:", !!loginSubmit)
-
-  // Force show the auth status for testing
-  if (authStatus) {
-    authStatus.style.display = "block"
-    authStatus.textContent = "Auth status element is working"
-    authStatus.className = "auth-success"
-
-    // Hide after 3 seconds
-    setTimeout(() => {
-      authStatus.style.display = "none"
-    }, 3000)
-  }
-})
+console.log("Main.js loaded");
 
 // DOM Elements
 const loginBtn = document.getElementById("loginBtn")
+const ctaLoginBtn = document.getElementById("ctaLoginBtn")
 const loginModal = document.getElementById("loginModal")
 const closeModal = document.querySelector(".close")
 const loginSubmit = document.getElementById("loginSubmit")
 const registerBtn = document.getElementById("registerBtn")
 const emailInput = document.getElementById("email")
 const passwordInput = document.getElementById("password")
+const regEmailInput = document.getElementById("reg-email")
+const regPasswordInput = document.getElementById("reg-password")
+const regConfirmPasswordInput = document.getElementById("reg-confirm-password")
+const termsCheckbox = document.getElementById("terms")
 const authStatus = document.getElementById("auth-status")
 const userProfile = document.getElementById("userProfile")
 const userName = document.getElementById("userName")
@@ -39,11 +27,41 @@ const userAvatar = document.getElementById("userAvatar")
 const leaderboardContent = document.getElementById("leaderboard-content")
 const joinButtons = document.querySelectorAll(".join-challenge")
 const logoutBtn = document.getElementById("logoutBtn")
+const tabBtns = document.querySelectorAll(".tab-btn")
+const tabContents = document.querySelectorAll(".tab-content")
+
+// Tab switching
+tabBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tabId = btn.getAttribute("data-tab")
+    
+    // Update active tab button
+    tabBtns.forEach(b => b.classList.remove("active"))
+    btn.classList.add("active")
+    
+    // Show selected tab content
+    tabContents.forEach(content => {
+      content.style.display = "none"
+    })
+    document.getElementById(`${tabId}-tab`).style.display = "block"
+  })
+})
 
 // Show login modal
+const showLoginModal = () => {
+  loginModal.style.display = "block"
+  // Reset to login tab
+  tabBtns[0].click()
+}
+
 loginBtn?.addEventListener("click", (e) => {
   e.preventDefault()
-  loginModal.style.display = "block"
+  showLoginModal()
+})
+
+ctaLoginBtn?.addEventListener("click", (e) => {
+  e.preventDefault()
+  showLoginModal()
 })
 
 // Close login modal
@@ -58,56 +76,70 @@ window.addEventListener("click", (e) => {
   }
 })
 
-// Replace the login functionality section with this improved version
 // Login functionality
-loginSubmit?.addEventListener("click", async () => {
-  const email = emailInput?.value
-  const password = passwordInput?.value
-
+loginSubmit?.addEventListener('click', async function() {
+  const email = emailInput?.value;
+  const password = passwordInput?.value;
+  
   if (!email || !password) {
-    showAuthStatus("Please enter both email and password", false)
+    showAuthStatus('Please enter both email and password', false);
+    return;
+  }
+  
+  try {
+    const result = await loginUser(email, password);
+    
+    if (result.success) {
+      showAuthStatus('Login successful!', true);
+      setTimeout(() => {
+        loginModal.style.display = 'none';
+      }, 1000);
+    } else {
+      showAuthStatus('Login failed: ' + result.error, false);
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    showAuthStatus('Login failed: ' + (error.message || 'Unknown error'), false);
+  }
+});
+
+// Register functionality
+registerBtn?.addEventListener("click", async () => {
+  const email = regEmailInput.value
+  const password = regPasswordInput.value
+  const confirmPassword = regConfirmPasswordInput.value
+  const termsAccepted = termsCheckbox.checked
+  
+  // Validation
+  if (!email || !password || !confirmPassword) {
+    showAuthStatus("Please fill in all fields", false)
+    return
+  }
+  
+  if (password !== confirmPassword) {
+    showAuthStatus("Passwords do not match", false)
+    return
+  }
+  
+  if (!termsAccepted) {
+    showAuthStatus("Please accept the terms and conditions", false)
     return
   }
 
   try {
-    const result = await loginUser(email, password)
+    const result = await registerUser(email, password)
 
     if (result.success) {
-      showAuthStatus("Login successful!", true)
+      showAuthStatus("Registration successful!", true)
       setTimeout(() => {
         loginModal.style.display = "none"
       }, 1000)
     } else {
-      showAuthStatus("Login failed: " + result.error, false)
+      showAuthStatus("Registration failed: " + result.error, false)
     }
   } catch (error) {
-    console.error("Login error:", error)
-    showAuthStatus("Login failed: " + (error.message || "Unknown error"), false)
-  }
-})
-
-// Register functionality
-registerBtn?.addEventListener("click", async () => {
-  const email = emailInput.value
-  const password = passwordInput.value
-
-  const result = await registerUser(email, password)
-
-  if (result.success) {
-    showAuthStatus("Registration successful!", true)
-    setTimeout(() => {
-      loginModal.style.display = "none"
-    }, 1000)
-  } else {
-    showAuthStatus("Registration failed: " + result.error, false)
-  }
-})
-
-// Logout functionality
-logoutBtn?.addEventListener("click", async () => {
-  const result = await logoutUser()
-  if (result.success) {
-    showAuthStatus("Logged out successfully", true)
+    console.error("Registration error:", error)
+    showAuthStatus("Registration failed: " + (error.message || "Unknown error"), false)
   }
 })
 
@@ -152,25 +184,39 @@ setupAuthListener(async (user) => {
 async function loadLeaderboard() {
   if (!leaderboardContent) return
 
-  leaderboardContent.innerHTML = ""
-
   try {
     const leaderboardData = await getLeaderboard()
 
     if (leaderboardData.length === 0) {
       const item = document.createElement("div")
       item.className = "leaderboard-item"
-      item.innerHTML = "<span>No data available yet</span><span></span>"
+      item.innerHTML = "<span colspan='4'>No data available yet</span>"
       leaderboardContent.appendChild(item)
     } else {
+      // Clear existing content
+      leaderboardContent.innerHTML = ""
+      
       leaderboardData.forEach((userData, index) => {
         const position = index + 1
         const item = document.createElement("div")
         item.className = "leaderboard-item"
+        
+        const initials = userData.displayName
+          .split(' ')
+          .map(name => name.charAt(0))
+          .join('')
+          .toUpperCase()
+          .substring(0, 2)
+        
         item.innerHTML = `
-            <span>${position}. ${userData.displayName}</span>
-            <span>${userData.score} pts</span>
-          `
+          <span class="rank">${position}</span>
+          <div class="hacker-info">
+            <div class="hacker-avatar">${initials}</div>
+            <span class="hacker-name">${userData.displayName}</span>
+          </div>
+          <span class="score">${userData.score} pts</span>
+          <span class="challenges-count">${userData.challenges?.length || 0}</span>
+        `
         leaderboardContent.appendChild(item)
       })
     }
@@ -187,7 +233,7 @@ joinButtons.forEach((button) => {
     // Check if user is logged in
     const user = auth.currentUser
     if (!user) {
-      loginModal.style.display = "block"
+      showLoginModal()
       return
     }
 
@@ -195,9 +241,11 @@ joinButtons.forEach((button) => {
     const result = await joinChallenge(user.uid, challengeId)
 
     if (result.success) {
-      // Change button text
+      // Change button text and style
       this.textContent = "Joined"
       this.disabled = true
+      this.classList.add("btn-outline")
+      this.classList.remove("btn-primary")
     } else {
       console.error("Error joining challenge: ", result.error)
     }
@@ -219,68 +267,17 @@ setupChallengeListeners((snapshot) => {
   })
 })
 
-// Load data when page loads
+// Typing animation for terminal
 document.addEventListener("DOMContentLoaded", () => {
+  // Load leaderboard
   loadLeaderboard()
-})
-
-// Load profile data
-async function loadProfile() {
-  const user = auth.currentUser
-  if (!user) {
-    window.location.href = "index.html" // Redirect to login if not authenticated
-    return
-  }
-
-  const userData = await getCurrentUserData()
-  if (userData) {
-    document.getElementById("profile-email").textContent = userData.email
-    document.getElementById("profile-displayName").textContent = userData.displayName
-    document.getElementById("profile-score").textContent = userData.score
-    document.getElementById("profile-challenges").textContent = userData.challenges?.join(", ") || "None"
-
-    // Set the value of the edit form
-    const displayNameInput = document.getElementById("edit-displayName")
-    if (displayNameInput) {
-      displayNameInput.value = userData.displayName
-    }
-  }
-}
-
-// Load profile data when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-  // Check if we're on the profile page
-  if (document.getElementById("profile-email")) {
-    loadProfile()
-  }
-})
-
-// Update profile data
-const editProfileForm = document.getElementById("edit-profile-form")
-if (editProfileForm) {
-  editProfileForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
-
-    const user = auth.currentUser
-    if (!user) {
-      showAuthStatus("You must be logged in to update your profile.", false)
-      return
-    }
-
-    const newDisplayName = document.getElementById("edit-displayName").value
-
-    try {
-      // Update Firestore document
-      await updateDoc(doc(db, "users", user.uid), {
-        displayName: newDisplayName,
-      })
-
-      // Update UI
-      document.getElementById("profile-displayName").textContent = newDisplayName
-      showAuthStatus("Profile updated successfully!", true)
-    } catch (error) {
-      showAuthStatus("Error updating profile: " + error.message, false)
-    }
+  
+  // Mobile menu toggle
+  const mobileMenuBtn = document.querySelector('.mobile-menu-btn')
+  const navLinks = document.querySelector('.nav-links')
+  
+  mobileMenuBtn?.addEventListener('click', () => {
+    navLinks.classList.toggle('show')
   })
-}
+})
 

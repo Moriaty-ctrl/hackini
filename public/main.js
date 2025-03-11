@@ -1,4 +1,5 @@
 // main.js
+import { auth, db } from './firebase.js';
 import { 
     registerUser, 
     loginUser, 
@@ -11,7 +12,7 @@ import {
     joinChallenge, 
     setupChallengeListeners 
   } from './database.js';
-  
+ 
   // DOM Elements
   const loginBtn = document.getElementById('loginBtn');
   const loginModal = document.getElementById('loginModal');

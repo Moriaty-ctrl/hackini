@@ -48,22 +48,24 @@ import {
   });
   
   // Login functionality
-  loginSubmit.addEventListener('click', async function() {
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    
-    const result = await loginUser(email, password);
-    
-    if (result.success) {
+// Login functionality
+loginSubmit.addEventListener('click', function() {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Login successful
       showAuthStatus('Login successful!', true);
       setTimeout(() => {
         loginModal.style.display = 'none';
       }, 1000);
-    } else {
-      showAuthStatus('Login failed: ' + result.error, false);
-    }
-  });
-  
+    })
+    .catch((error) => {
+      // Login failed
+      showAuthStatus('Login failed: ' + error.message, false);
+    });
+});
   // Register functionality
   registerBtn.addEventListener('click', async function() {
     const email = emailInput.value;

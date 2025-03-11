@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Blog - CyberDojo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <style>
+        .blog-hero {
+            background: linear-gradient(135deg, rgba(var(--accent-red-rgb), 0.1) 0%, transparent 100%);
+            padding: var(--spacing-xl) 5%;
+            text-align: center;
+        }
+        
+        .blog-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .blog-hero h1 {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .blog-hero p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .blog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 5%;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: var(--spacing-xl);
+        }
+        
+        .blog-main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+        
+        .blog-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .blog-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .blog-card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        
+        .blog-card-content {
+            padding: var(--spacing-lg);
+        }
+        
+        .blog-card-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .blog-card-meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .blog-card-title {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .blog-card-excerpt {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+        
+        .blog-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .blog-tag {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            color: var(--accent-red);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .blog-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-md);
+        }
+        
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .blog-author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .blog-author-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .sidebar-card h3 {
+            margin-bottom: var(--spacing-md);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .sidebar-card h3 i {
+            color: var(--accent-red);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+        }
+        
+        .categories-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .category-item:last-child {
+            border-bottom: none;
+        }
+        
+        .category-name {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .category-name:hover {
+            color: var(--accent-red);
+        }
+        
+        .category-count {
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            color: var(--accent-red);
+            padding: 0 var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .popular-posts {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .popular-post {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .popular-post-image {
+            width: 80px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+        }
+        
+        .popular-post-content {
+            flex: 1;
+        }
+        
+        .popular-post-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.4;
+        }
+        
+        .popular-post-meta {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .page-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .page-item:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+        
+        .page-item.active {
+            background-color: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+        }
+        
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 1024px) {
+            .blog-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .blog-sidebar {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .blog-card-image {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">
+                        <i class="ph-house"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="challenges.html" class="nav-link">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="leaderboard.html" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="docs.html" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="blog.html" class="nav-link active">
+                        <i class="ph-newspaper"></i>
+                        <span>Blog</span>
+                    </a>
+                    <a href="profile.html" class="nav-link">
+                        <i class="ph-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" id="loginBtn" class="nav-link login-btn">
+                        <i class="ph-sign-in"></i>
+                        <span>Login</span>
+                    </a>
+                    <div id="userProfile" class="user-profile">
+                        <div class="avatar" id="userAvatar"></div>
+                        <span id="userName"></span>
+                        <i class="ph-caret-down"></i>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="ph-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="challenges.html" class="mobile-nav-link">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="leaderboard.html" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="docs.html" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="blog.html" class="mobile-nav-link active">
+                <i class="ph-newspaper"></i>
+                <span>Blog</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-link">
+                <i class="ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="#" id="mobileLoginBtn" class="mobile-nav-link">
+                <i class="ph-sign-in"></i>
+                <span>Login</span>
+            </a>
+        </div>
+
+        <section class="blog-hero">
+            <div class="blog-hero-content">
+                <h1>CyberDojo <span class="accent">Blog</span></h1>
+                <p>Latest news, tutorials, and insights from the cybersecurity world</p>
+            </div>
+        </section>
+
+        <div class="blog-container">
+            <div class="blog-main">
+                <article class="blog-card">
+                    <img src="/placeholder.svg?height=220&width=800" alt="Log4j Vulnerability" class="blog-card-image">
+                    <div class="blog-card-content">
+                        <div class="blog-card-meta">
+                            <div class="blog-card-meta-item">
+                                <i class="ph-calendar"></i>
+                                <span>January 15, 2023</span>
+                            </div>
+                            <div class="blog-card-meta-item">
+                                <i class="ph-eye"></i>
+                                <span>1,245 views</span>
+                            </div>
+                            <div class="blog-card-meta-item">
+                                <i class="ph-chat-circle"></i>
+                                <span>24 comments</span>
+                            </div>
+                        </div>
+                        <h2 class="blog-card-title">Understanding and Mitigating the Log4j Vulnerability</h2>
+                        <div class="blog-card-tags">
+                            <span class="blog-tag">Security</span>
+                            <span class="blog-tag">Vulnerability</span>
+                            <span class="blog-tag">Java</span>
+                        </div>
+                        <p class="blog-card-excerpt">The Log4j vulnerability (CVE-2021-44228) has sent shockwaves through the cybersecurity community. In this article, we'll explore what makes this vulnerability so dangerous, how it works, and what steps you can take to protect your systems.</p>
+                        <div class="blog-card-footer">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar">JD</div>
+                                <div class="blog-author-name">John Doe</div>
+                            </div>
+                            <a href="#" class="btn btn-outline">Read More</a>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <img src="/placeholder.svg?height=220&width=800" alt="XSS Attacks" class="blog-card-image">
+                    <div class="blog-card-content">
+                        <div class="blog-card-meta">
+                            <div class="blog-card-meta-item">
+                                <i class="ph-calendar"></i>
+                                <span>December 28, 2022</span>
+                            </div>
+                            <div class="blog-card-meta-item">
+                                <i class="ph-eye"></i>
+                                <span>982 views</span>
+                            </div>
+                            <div class="blog-card-meta-item">
+                                <i class="ph-chat-circle"></i>
+                                <span>18 comments</span>
+                            </div>
+                        </div>
+                        <h2 class="blog-card-title">Advanced XSS Attack Techniques and Prevention Strategies</h2>
+                        <div class="blog-card-tags">
+                            <span class="blog-tag">Web Security</span>
+                            <span class="blog-tag">XSS</span>
+                            <span class="blog-tag">JavaScript</span>
+                        </div>
+                        <p class="blog-card-excerpt">Cross-Site Scripting (XSS) remains one of the most prevalent web application vulnerabilities. This article dives deep into advanced XSS attack vectors, including DOM-based XSS, and provides comprehensive prevention strategies for developers.</p>
+                        <div class="blog-card-footer">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar">AH</div>
+                                <div class="blog-author-name">Alice Hacker</div>
+                            </div>
+                            <a href="#" class="btn btn-outline">Read More</a>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="blog-card">
+                    <img src="/placeholder.svg?height=220&width=800" alt="Ethical Hacking" class="blog-card-image">
+                    <div class="blog-card-content">
+                        <div class="blog-card-meta">
+                            <div class="blog-card-meta-item">
+                                <i class="ph-calendar"></i>
+                                <span>December 10, 2022</span>
+                            </div>
+                            <div class="blog-card-meta-item">
+                                <i class="ph-eye"></i>
+                                <span>1,567 views</span>
+                            </div>
+                            <div class="blog-card-meta-item">
+                                <i class="ph-chat-circle"></i>
+                                <span>32 comments</span>
+                            </div>
+                        </div>
+                        <h2 class="blog-card-title">Ethical Hacking: Building Your Career in Cybersecurity</h2>
+                        <div class="blog-card-tags">
+                            <span class="blog-tag">Career</span>
+                            <span class="blog-tag">Ethical Hacking</span>
+                            <span class="blog-tag">Education</span>
+                        </div>
+                        <p class="blog-card-excerpt">Interested in pursuing a career in ethical hacking? This comprehensive guide covers everything from essential skills and certifications to job hunting strategies and building a professional network in the cybersecurity industry.</p>
+                        <div class="blog-card-footer">
+                            <div class="blog-author">
+                                <div class="blog-author-avatar">BS</div>
+                                <div class="blog-author-name">Bob Security</div>
+                            </div>
+                            <a href="#" class="btn btn-outline">Read More</a>
+                        </div>
+                    </div>
+                </article>
+                
+                <div class="pagination">
+                    <div class="page-item disabled">
+                        <i class="ph-caret-left"></i>
+                    </div>
+                    <div class="page-item active">1</div>
+                    <div class="page-item">2</div>
+                    <div class="page-item">3</div>
+                    <div class="page-item">...</div>
+                    <div class="page-item">10</div>
+                    <div class="page-item">
+                        <i class="ph-caret-right"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="blog-sidebar">
+                <div class="sidebar-card">
+                    <h3><i class="ph-magnifying-glass"></i> Search</h3>
+                    <form class="search-form">
+                        <input type="text" class="search-input" placeholder="Search articles...">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ph-magnifying-glass"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3><i class="ph-folder"></i> Categories</h3>
+                    <div class="categories-list">
+                        <div class="category-item">
+                            <a href="#" class="category-name">Web Security</a>
+                            <span class="category-count">24</span>
+                        </div>
+                        <div class="category-item">
+                            <a href="#" class="category-name">Network Security</a>
+                            <span class="category-count">18</span>
+                        </div>
+                        <div class="category-item">
+                            <a href="#" class="category-name">Cryptography</a>
+                            <span class="category-count">12</span>
+                        </div>
+                        <div class="category-item">
+                            <a href="#" class="category-name">Reverse Engineering</a>
+                            <span class="category-count">9</span>
+                        </div>
+                        <div class="category-item">
+                            <a href="#" class="category-name">Career Development</a>
+                            <span class="category-count">15</span>
+                        </div>
+                        <div class="category-item">
+                            <a href="#" class="category-name">Tools & Resources</a>
+                            <span class="category-count">21</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3><i class="ph-star"></i> Popular Posts</h3>
+                    <div class="popular-posts">
+                        <div class="popular-post">
+                            <img src="/placeholder.svg?height=60&width=80" alt="Popular post" class="popular-post-image">
+                            <div class="popular-post-content">
+                                <div class="popular-post-title">Top 10 Cybersecurity Tools Every Hacker Should Know</div>
+                                <div class="popular-post-meta">
+                                    <i class="ph-calendar"></i>
+                                    <span>Nov 15, 2022</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="popular-post">
+                            <img src="/placeholder.svg?height=60&width=80" alt="Popular post" class="popular-post-image">
+                            <div class="popular-post-content">
+                                <div class="popular-post-title">Understanding Buffer Overflow Vulnerabilities</div>
+                                <div class="popular-post-meta">
+                                    <i class="ph-calendar"></i>
+                                    <span>Oct 28, 2022</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="popular-post">
+                            <img src="/placeholder.svg?height=60&width=80" alt="Popular post" class="popular-post-image">
+                            <div class="popular-post-content">
+                                <div class="popular-post-title">The Complete Guide to OWASP Top 10 (2022)</div>
+                                <div class="popular-post-meta">
+                                    <i class="ph-calendar"></i>
+                                    <span>Oct 12, 2022</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3><i class="ph-tag"></i> Tags</h3>
+                    <div class="tags-cloud">
+                        <span class="blog-tag">Security</span>
+                        <span class="blog-tag">Web</span>
+                        <span class="blog-tag">Network</span>
+                        <span class="blog-tag">Hacking</span>
+                        <span class="blog-tag">Ethical</span>
+                        <span class="blog-tag">Tools</span>
+                        <span class="blog-tag">CTF</span>
+                        <span class="blog-tag">Vulnerability</span>
+                        <span class="blog-tag">Penetration Testing</span>
+                        <span class="blog-tag">Malware</span>
+                        <span class="blog-tag">Forensics</span>
+                        <span class="blog-tag">Career</span>
+                        <span class="blog-tag">Certification</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3><i class="ph-envelope"></i> Newsletter</h3>
+                    <p>Subscribe to our newsletter to receive the latest cybersecurity news and updates.</p>
+                    <form class="search-form">
+                        <input type="email" class="search-input" placeholder="Your email address">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ph-paper-plane-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="main.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>
+

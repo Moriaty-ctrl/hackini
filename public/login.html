@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login - CyberDojo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <style>
+        .login-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 5%;
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .login-image {
+            background: linear-gradient(135deg, rgba(var(--accent-red-rgb), 0.8) 0%, rgba(var(--accent-red-rgb), 0.6) 100%), url('/placeholder.svg?height=600&width=500');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--spacing-xl);
+            color: white;
+            position: relative;
+        }
+        
+        .login-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        
+        .login-image-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-image h2 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .login-image p {
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.9;
+        }
+        
+        .login-features {
+            margin-top: var(--spacing-xl);
+        }
+        
+        .login-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .login-feature i {
+            font-size: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-feature-text {
+            font-weight: 500;
+        }
+        
+        .login-form-container {
+            padding: var(--spacing-xl);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .login-logo i {
+            font-size: 1.8rem;
+            color: var(--accent-red);
+        }
+        
+        .login-logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            border-bottom: 2px solid transparent;
+        }
+        
+        .login-tab.active {
+            color: var(--accent-red);
+            border-bottom-color: var(--accent-red);
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+        }
+        
+        .input-icon {
+            position: relative;
+        }
+        
+        .input-icon i {
+            position: absolute;
+            left: var(--spacing-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+        
+        .input-icon input {
+            width: 100%;
+            padding: var(--spacing-md);
+            padding-left: 2.5rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            border-radius: var(--radius-md);
+            transition: border-color var(--transition-fast);
+        }
+        
+        .input-icon input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            font-size: 0.9rem;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .forgot-password {
+            color: var(--accent-red);
+            text-decoration: none;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        .social-login {
+            margin-top: var(--spacing-lg);
+            text-align: center;
+        }
+        
+        .social-login p {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            position: relative;
+        }
+        
+        .social-login p::before,
+        .social-login p::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+        
+        .social-login p::before {
+            left: 0;
+        }
+        
+        .social-login p::after {
+            right: 0;
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .social-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm) 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .social-btn:hover {
+            background-color: rgba(var(--accent-red-rgb), 0.05);
+        }
+        
+        .social-btn.google:hover {
+            border-color: #4285f4;
+            color: #4285f4;
+        }
+        
+        .social-btn.github:hover {
+            border-color: #333;
+            color: var(--text-primary);
+        }
+        
+        .login-footer {
+            margin-top: var(--spacing-lg);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .login-footer a {
+            color: var(--accent-red);
+            text-decoration: none;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        #auth-status {
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            text-align: center;
+            display: none;
+        }
+        
+        .auth-success {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .auth-error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        @media (max-width: 768px) {
+            .login-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .login-image {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">
+                        <i class="ph-house"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="challenges.html" class="nav-link">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="leaderboard.html" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="docs.html" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="blog.html" class="nav-link">
+                        <i class="ph-newspaper"></i>
+                        <span>Blog</span>
+                    </a>
+                    <a href="login.html" class="nav-link active login-btn">
+                        <i class="ph-sign-in"></i>
+                        <span>Login</span>
+                    </a>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="ph-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="challenges.html" class="mobile-nav-link">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="leaderboard.html" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="docs.html" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="blog.html" class="mobile-nav-link">
+                <i class="ph-newspaper"></i>
+                <span>Blog</span>
+            </a>
+            <a href="login.html" class="mobile-nav-link active">
+                <i class="ph-sign-in"></i>
+                <span>Login</span>
+            </a>
+        </div>
+
+        <div class="login-container">
+            <div class="login-wrapper">
+                <div class="login-image">
+                    <div class="login-image-content">
+                        <h2>Welcome to CyberDojo</h2>
+                        <p>Join our community of security professionals and ethical hackers to improve your skills and earn recognition.</p>
+                        
+                        <div class="login-features">
+                            <div class="login-feature">
+                                <i class="ph-target"></i>
+                                <div class="login-feature-text">Access 100+ realistic security challenges</div>
+                            </div>
+                            <div class="login-feature">
+                                <i class="ph-trophy"></i>
+                                <div class="login-feature-text">Compete on global leaderboards</div>
+                            </div>
+                            <div class="login-feature">
+                                <i class="ph-users"></i>
+                                <div class="login-feature-text">Join a community of 10,000+ hackers</div>
+                            </div>
+                            <div class="login-feature">
+                                <i class="ph-certificate"></i>
+                                <div class="login-feature-text">Earn badges and certifications</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="login-form-container">
+                    <div class="login-logo">
+                        <i class="ph-shield-check-duotone"></i>
+                        <div class="login-logo-text">CyberDojo</div>
+                    </div>
+                    
+                    <div class="login-tabs">
+                        <div class="login-tab active" data-tab="login">Login</div>
+                        <div class="login-tab" data-tab="register">Register</div>
+                    </div>
+                    
+                    <div class="login-form active" id="login-form">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <div class="input-icon">
+                                <i class="ph-envelope"></i>
+                                <input type="email" id="email" placeholder="Enter your email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-icon">
+                                <i class="ph-lock"></i>
+                                <input type="password" id="password" placeholder="Enter your password">
+                            </div>
+                        </div>
+                        <div class="form-options">
+                            <label class="checkbox-container">
+                                <input type="checkbox" checked="checked">
+                                <span class="checkmark"></span>
+                                Remember me
+                            </label>
+                            <a href="#" class="forgot-password">Forgot password?</a>
+                        </div>
+                        <button id="loginSubmit" class="btn btn-primary btn-block">Login</button>
+                        
+                        <div class="social-login">
+                            <p>Or continue with</p>
+                            <div class="social-buttons">
+                                <button class="social-btn google">
+                                    <i class="ph-google-logo"></i>
+                                    Google
+                                </button>
+                                <button class="social-btn github">
+                                    <i class="ph-github-logo"></i>
+                                    GitHub
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="login-form" id="register-form">
+                        <div class="form-group">
+                            <label for="reg-name">Username</label>
+                            <div class="input-icon">
+                                <i class="ph-user"></i>
+                                <input type="text" id="reg-name" placeholder="Choose a username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Email</label>
+                            <div class="input-icon">
+                                <i class="ph-envelope"></i>
+                                <input type="email" id="reg-email" placeholder="Enter your email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">Password</label>
+                            <div class="input-icon">
+                                <i class="ph-lock"></i>
+                                <input type="password" id="reg-password" placeholder="Create a password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-confirm-password">Confirm Password</label>
+                            <div class="input-icon">
+                                <i class="ph-lock"></i>
+                                <input type="password" id="reg-confirm-password" placeholder="Confirm your password">
+                            </div>
+                        </div>
+                        <div class="form-options">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="terms">
+                                <span class="checkmark"></span>
+                                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <button id="registerBtn" class="btn btn-primary btn-block">Create Account</button>
+                        
+                        <div class="social-login">
+                            <p>Or register with</p>
+                            <div class="social-buttons">
+                                <button class="social-btn google">
+                                    <i class="ph-google-logo"></i>
+                                    Google
+                                </button>
+                                <button class="social-btn github">
+                                    <i class="ph-github-logo"></i>
+                                    GitHub
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="auth-status"></div>
+                    
+                    <div class="login-footer">
+                        <p>By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    
+    <!-- Scripts -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="main.js"></script>
+    <script src="ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            const tabs = document.querySelectorAll('.login-tab');
+            const forms = document.querySelectorAll('.login-form');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and forms
+                    tabs.forEach(t => t.classList.remove('active'));
+                    forms.forEach(f => f.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding form
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-form`).classList.add('active');
+                });
+            });
+            
+            // Login functionality
+            const loginSubmit = document.getElementById('loginSubmit');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            loginSubmit?.addEventListener('click', async function() {
+                const email = emailInput?.value;
+                const password = passwordInput?.value;
+                
+                if (!email || !password) {
+                    showAuthStatus('Please enter both email and password', false);
+                    return;
+                }
+                
+                try {
+                    const result = await loginUser(email, password);
+                    
+                    if (result.success) {
+                        showAuthStatus('Login successful! Redirecting...', true);
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showAuthStatus('Login failed: ' + result.error, false);
+                    }
+                } catch (error) {
+                    console.error("Login error:", error);
+                    showAuthStatus('Login failed: ' + (error.message || 'Unknown error'), false);
+                }
+            });
+            
+            // Register functionality
+            const registerBtn = document.getElementById('registerBtn');
+            const regNameInput = document.getElementById('reg-name');
+            const regEmailInput = document.getElementById('reg-email');
+            const regPasswordInput = document.getElementById('reg-password');
+            const regConfirmPasswordInput = document.getElementById('reg-confirm-password');
+            const termsCheckbox = document.getElementById('terms');
+            
+            registerBtn?.addEventListener('click', async function() {
+                const username = regNameInput.value;
+                const email = regEmailInput.value;
+                const password = regPasswordInput.value;
+                const confirmPassword = regConfirmPasswordInput.value;
+                const termsAccepted = termsCheckbox.checked;
+                
+                // Validation
+                if (!username || !email || !password || !confirmPassword) {
+                    showAuthStatus('Please fill in all fields', false);
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showAuthStatus('Passwords do not match', false);
+                    return;
+                }
+                
+                if (!termsAccepted) {
+                    showAuthStatus('Please accept the terms and conditions', false);
+                    return;
+                }
+                
+                try {
+                    const result = await registerUser(email, password, username);
+                    
+                    if (result.success) {
+                        showAuthStatus('Registration successful! Redirecting...', true);
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        showAuthStatus('Registration failed: ' + result.error, false);
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showAuthStatus('Registration failed: ' + (error.message || 'Unknown error'), false);
+                }
+            });
+            
+            // Show auth status message
+            function showAuthStatus(message, isSuccess) {
+                const authStatus = document.getElementById('auth-status');
+                authStatus.textContent = message;
+                authStatus.style.display = 'block';
+                
+                if (isSuccess) {
+                    authStatus.className = 'auth-success';
+                } else {
+                    authStatus.className = 'auth-error';
+                }
+                
+                // Hide message after 3 seconds if not success
+                if (!isSuccess) {
+                    setTimeout(() => {
+                        authStatus.style.display = 'none';
+                    }, 3000);
+                }
+            }
+            
+            // Mock functions for demo purposes
+            async function loginUser(email, password) {
+                // This would normally call your Firebase auth function
+                console.log('Login attempt with:', email, password);
+                
+                // Simulate successful login for demo
+                if (email === 'demo@example.com' && password === 'password') {
+                    return { success: true };
+                }
+                
+                return { success: false, error: 'Invalid credentials' };
+            }
+            
+            async function registerUser(email, password, username) {
+                // This would normally call your Firebase auth function
+                console.log('Register attempt with:', email, password, username);
+                
+                // Simulate successful registration for demo
+                if (email && password && username) {
+                    return { success: true };
+                }
+                
+                return { success: false, error: 'Registration failed' };
+            }
+        });
+    </script>
+</body>
+</html>
+

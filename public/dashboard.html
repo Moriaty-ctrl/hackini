@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dashboard - CyberDojo</title>
+    <link rel="stylesheet" href="styles  content="IE=edge">
+    <title>Dashboard - CyberDojo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/phosphor-icons"></script>
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 5%;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .dashboard-title {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .dashboard-subtitle {
+            color: var(--text-secondary);
+        }
+        
+        .dashboard-actions {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+        }
+        
+        .dashboard-main {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+        
+        .dashboard-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+        
+        .dashboard-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .dashboard-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .dashboard-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .dashboard-card-title i {
+            color: var(--accent-red);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .stat-card {
+            background-color: var(--primary-bg);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+            color: var(--accent-red);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .progress-container {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .progress-title {
+            font-weight: 500;
+        }
+        
+        .progress-value {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--border-color);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--accent-red);
+            border-radius: var(--radius-full);
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: var(--spacing-md);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-red);
+            font-size: 1.2rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .activity-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .challenge-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .challenge-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            background-color: var(--primary-bg);
+            transition: transform var(--transition-fast);
+        }
+        
+        .challenge-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .challenge-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .challenge-icon i {
+            font-size: 1.5rem;
+            color: var(--accent-red);
+        }
+        
+        .challenge-info {
+            flex: 1;
+        }
+        
+        .challenge-name {
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .challenge-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .challenge-meta span {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .challenge-status {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-in-progress {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--info-color);
+        }
+        
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: var(--spacing-md);
+        }
+        
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .badge-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(var(--accent-red-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .badge-icon i {
+            font-size: 1.5rem;
+            color: var(--accent-red);
+        }
+        
+        .badge-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: background-color var(--transition-fast);
+        }
+        
+        .leaderboard-item:hover {
+            background-color: rgba(var(--accent-red-rgb), 0.05);
+        }
+        
+        .leaderboard-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: var(--spacing-sm);
+        }
+        
+        .leaderboard-rank.top {
+            background-color: var(--accent-red);
+            color: white;
+        }
+        
+        .leaderboard-user {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .leaderboard-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--accent-red);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: var(--spacing-sm);
+        }
+        
+        .leaderboard-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .leaderboard-score {
+            font-weight: 600;
+            color: var(--accent-red);
+        }
+        
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo-container">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">
+                        <i class="ph-house"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="challenges.html" class="nav-link">
+                        <i class="ph-target"></i>
+                        <span>Challenges</span>
+                    </a>
+                    <a href="leaderboard.html" class="nav-link">
+                        <i class="ph-trophy"></i>
+                        <span>Leaderboard</span>
+                    </a>
+                    <a href="docs.html" class="nav-link">
+                        <i class="ph-book-open"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="blog.html" class="nav-link">
+                        <i class="ph-newspaper"></i>
+                        <span>Blog</span>
+                    </a>
+                    <a href="profile.html" class="nav-link">
+                        <i class="ph-user-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                    <div id="userProfile" class="user-profile">
+                        <div class="avatar" id="userAvatar">JD</div>
+                        <span id="userName">JohnDoe</span>
+                        <i class="ph-caret-down"></i>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ph-sun"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="ph-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="mobile-nav-link">
+                <i class="ph-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="challenges.html" class="mobile-nav-link">
+                <i class="ph-target"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="leaderboard.html" class="mobile-nav-link">
+                <i class="ph-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="docs.html" class="mobile-nav-link">
+                <i class="ph-book-open"></i>
+                <span>Docs</span>
+            </a>
+            <a href="blog.html" class="mobile-nav-link">
+                <i class="ph-newspaper"></i>
+                <span>Blog</span>
+            </a>
+            <a href="profile.html" class="mobile-nav-link">
+                <i class="ph-user-circle"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="dashboard-title">Welcome back, John!</h1>
+                    <p class="dashboard-subtitle">Here's an overview of your progress and activity</p>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="btn btn-outline">
+                        <i class="ph-gear"></i>
+                        Settings
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="ph-target"></i>
+                        Start New Challenge
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-main">
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h2 class="dashboard-card-title">
+                                <i class="ph-chart-line"></i>
+                                Your Progress
+                            </h2>
+                            <div class="time-filter">
+                                <button class="time-btn active">Week</button>
+                                <button class="time-btn">Month</button>
+                                <button class="time-btn">Year</button>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">Challenges Completed</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">1,250</div>
+                                <div class="stat-label">Points Earned</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">5</div>
+                                <div class="stat-label">Badges Unlocked</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">24</div>
+                                <div class="stat-label">Hours Spent</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <div class="progress-title">Web Security Track</div>
+                                <div class="progress-value">65%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <div class="progress-title">Network Security Track</div>
+                                <div class="progress-value">40%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <div class="progress-title">Cryptography Track</div>
+                                <div class="progress-value">25%</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 25%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h2 class="dashboard-card-title">
+                                <i class="ph-activity"></i>
+                                Recent Activity
+                            </h2>
+                            <a href="#" class="btn btn-outline btn-sm">View All</a>
+                        </div>
+                        
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="ph-check-circle"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Completed "E-Commerce Platform" challenge</div>
+                                    <div class="activity-meta">
+                                        <span><i class="ph-calendar"></i> 2 days ago</span>
+                                        <span><i class="ph-coin"></i> 250 points earned</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="ph-medal"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Earned "Bug Hunter" badge</div>
+                                    <div class="activity-meta">
+                                        <span><i class="ph-calendar"></i> 3 days ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="ph-play"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Started "Social Media API" challenge</div>
+                                    <div class="activity-meta">
+                                        <span><i class="ph-calendar"></i> 5 days ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="ph-thumbs-up"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Received kudos from AliceHacker</div>
+                                    <div class="activity-meta">
+                                        <span><i class="ph-calendar"></i> 1 week ago</span>
+                                        <span><i class="ph-chat-text"></i> "Great solution to the XSS challenge!"</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h2 class="dashboard-card-title">
+                                <i class="ph-target"></i>
+                                Your Challenges
+                            </h2>
+                            <div class="filter-controls">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">In Progress</button>
+                                <button class="filter-btn">Completed</button>
+                            </div>
+                        </div>
+                        
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-hourglass"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Social Media API</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-calendar"></i> Started 5 days ago</span>
+                                        <span><i class="ph-coin"></i> 400 points</span>
+                                    </div>
+                                </div>
+                                <div class="challenge-status status-in-progress">In Progress</div>
+                            </div>
+                            
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-check-circle"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">E-Commerce Platform</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-calendar"></i> Completed 2 days ago</span>
+                                        <span><i class="ph-coin"></i> 250 points</span>
+                                    </div>
+                                </div>
+                                <div class="challenge-status status-completed">Completed</div>
+                            </div>
+                            
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-check-circle"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Blockchain Wallet</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-calendar"></i> Completed 2 weeks ago</span>
+                                        <span><i class="ph-coin"></i> 150 points</span>
+                                    </div>
+                                </div>
+                                <div class="challenge-status status-completed">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-sidebar">
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h2 class="dashboard-card-title">
+                                <i class="ph-medal"></i>
+                                Your Badges
+                            </h2>
+                            <a href="#" class="btn btn-outline btn-sm">View All</a>
+                        </div>
+                        
+                        <div class="badge-grid">
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-rocket"></i>
+                                </div>
+                                <div class="badge-name">First Blood</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-bug"></i>
+                                </div>
+                                <div class="badge-name">Bug Hunter</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-lightning"></i>
+                                </div>
+                                <div class="badge-name">Quick Solver</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-trophy"></i>
+                                </div>
+                                <div class="badge-name">Top 10</div>
+                            </div>
+                            <div class="badge">
+                                <div class="badge-icon">
+                                    <i class="ph-shield"></i>
+                                </div>
+                                <div class="badge-name">Defender</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h2 class="dashboard-card-title">
+                                <i class="ph-trophy"></i>
+                                Leaderboard
+                            </h2>
+                            <a href="leaderboard.html" class="btn btn-outline btn-sm">Full Leaderboard</a>
+                        </div>
+                        
+                        <div class="leaderboard-list">
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank top">1</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">JD</div>
+                                    <div class="leaderboard-name">JohnDoe</div>
+                                </div>
+                                <div class="leaderboard-score">3,450</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank top">2</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">AH</div>
+                                    <div class="leaderboard-name">AliceHacker</div>
+                                </div>
+                                <div class="leaderboard-score">3,120</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank top">3</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">BS</div>
+                                    <div class="leaderboard-name">BobSecurity</div>
+                                </div>
+                                <div class="leaderboard-score">2,890</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank">4</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">CH</div>
+                                    <div class="leaderboard-name">CharliePwn</div>
+                                </div>
+                                <div class="leaderboard-score">2,750</div>
+                            </div>
+                            <div class="leaderboard-item">
+                                <div class="leaderboard-rank">5</div>
+                                <div class="leaderboard-user">
+                                    <div class="leaderboard-avatar">DH</div>
+                                    <div class="leaderboard-name">DaveHack</div>
+                                </div>
+                                <div class="leaderboard-score">2,580</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h2 class="dashboard-card-title">
+                                <i class="ph-lightbulb"></i>
+                                Recommended Challenges
+                            </h2>
+                        </div>
+                        
+                        <div class="challenge-list">
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-database"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Banking Portal</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-tag"></i> Web Security</span>
+                                        <span><i class="ph-coin"></i> 500 points</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-file-search"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Data Recovery</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-tag"></i> Forensics</span>
+                                        <span><i class="ph-coin"></i> 300 points</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-item">
+                                <div class="challenge-icon">
+                                    <i class="ph-code"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <div class="challenge-name">Binary Analysis</div>
+                                    <div class="challenge-meta">
+                                        <span><i class="ph-tag"></i> Reverse Engineering</span>
+                                        <span><i class="ph-coin"></i> 450 points</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="ph-shield-check-duotone"></i>
+                    <div class="logo">CyberDojo</div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Platform</h3>
+                        <a href="#">Challenges</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">API</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Blog</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Responsible Disclosure</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="ph-twitter-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-github-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-discord-logo"></i></a>
+                            <a href="#" class="social-link"><i class="ph-linkedin-logo"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 CyberDojo. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="main.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>
+

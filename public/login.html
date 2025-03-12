@@ -622,16 +622,14 @@
                 }
                 
                 try {
-                    const result = await loginUser(email, password);
+                    // Use Firebase authentication
+                    const auth = firebase.auth();
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
                     
-                    if (result.success) {
-                        showAuthStatus('Login successful! Redirecting...', true);
-                        setTimeout(() => {
-                            window.location.href = 'index.html';
-                        }, 1500);
-                    } else {
-                        showAuthStatus('Login failed: ' + result.error, false);
-                    }
+                    showAuthStatus('Login successful! Redirecting...', true);
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
                 } catch (error) {
                     console.error("Login error:", error);
                     showAuthStatus('Login failed: ' + (error.message || 'Unknown error'), false);
@@ -670,16 +668,33 @@
                 }
                 
                 try {
-                    const result = await registerUser(email, password, username);
+                    // Use Firebase authentication
+                    const auth = firebase.auth();
+                    const db = firebase.firestore();
                     
-                    if (result.success) {
-                        showAuthStatus('Registration successful! Redirecting...', true);
-                        setTimeout(() => {
-                            window.location.href = 'index.html';
-                        }, 1500);
-                    } else {
-                        showAuthStatus('Registration failed: ' + result.error, false);
-                    }
+                    // Create user with email and password
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    // Add user data to Firestore
+                    await db.collection('users').doc(user.uid).set({
+                        displayName: username,
+                        email: email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        score: 0,
+                        challenges: [],
+                        badges: []
+                    });
+                    
+                    // Update profile display name
+                    await user.updateProfile({
+                        displayName: username
+                    });
+                    
+                    showAuthStatus('Registration successful! Redirecting...', true);
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
                 } catch (error) {
                     console.error('Registration error:', error);
                     showAuthStatus('Registration failed: ' + (error.message || 'Unknown error'), false);
@@ -706,30 +721,13 @@
                 }
             }
             
-            // Mock functions for demo purposes
-            async function loginUser(email, password) {
-                // This would normally call your Firebase auth function
-                console.log('Login attempt with:', email, password);
-                
-                // Simulate successful login for demo
-                if (email === 'demo@example.com' && password === 'password') {
-                    return { success: true };
+            // Check if user is already logged in
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is signed in, redirect to dashboard
+                    window.location.href = 'dashboard.html';
                 }
-                
-                return { success: false, error: 'Invalid credentials' };
-            }
-            
-            async function registerUser(email, password, username) {
-                // This would normally call your Firebase auth function
-                console.log('Register attempt with:', email, password, username);
-                
-                // Simulate successful registration for demo
-                if (email && password && username) {
-                    return { success: true };
-                }
-                
-                return { success: false, error: 'Registration failed' };
-            }
+            });
         });
     </script>
 </body>

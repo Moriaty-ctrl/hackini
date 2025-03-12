@@ -1,78 +1,79 @@
-// auth.js
-import { 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut 
-  } from "firebase/auth";
-  import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-  import { auth, db } from "./firebase.js";
-  
-  // Register new user
-  export const registerUser = async (email, password) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      
-      // Create user profile in Firestore
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        email: email,
-        displayName: email.split('@')[0],
-        score: 0,
-        joined: serverTimestamp(),
-        challenges: []
-      });
-      
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
-  
-  import { signInWithEmailAndPassword } from "firebase/auth"
-  import { auth } from "./firebase"
-  
-  // Modify the loginUser function to add more debugging
-  export const loginUser = async (email, password) => {
-    console.log("Login attempt with:", email)
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      console.log("Login successful:", userCredential.user.uid)
-      return { success: true }
-    } catch (error) {
-      console.error("Login error in auth.js:", error.code, error.message)
-      return { success: false, error: error.message }
-    }
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"
+import { auth, db } from "./firebase"
+
+// Register a new user
+export const registerUser = async (email, password, displayName) => {
+  try {
+    // Create user with email and password
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+
+    // Add user data to Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      displayName: displayName,
+      email: email,
+      createdAt: serverTimestamp(),
+      score: 0,
+      challenges: [],
+      badges: [],
+    })
+
+    // Update profile display name
+    await user.updateProfile({
+      displayName: displayName,
+    })
+
+    return { success: true, user }
+  } catch (error) {
+    console.error("Registration error:", error.code, error.message)
+    return { success: false, error: error.message }
   }
-  
-  
-  
-  
-  // Logout user
-  export const logoutUser = async () => {
-    try {
-      await signOut(auth);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
+}
+
+// Login user
+export const loginUser = async (email, password) => {
+  console.log("Login attempt with:", email)
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    console.log("Login successful:", userCredential.user.uid)
+    return { success: true, user: userCredential.user }
+  } catch (error) {
+    console.error("Login error in auth.js:", error.code, error.message)
+    return { success: false, error: error.message }
+  }
+}
+
+// Logout user
+export const logoutUser = async () => {
+  try {
+    await signOut(auth)
+    return { success: true }
+  } catch (error) {
+    console.error("Logout error:", error.code, error.message)
+    return { success: false, error: error.message }
+  }
+}
+
+// Get current user data from Firestore
+export const getCurrentUserData = async () => {
+  try {
+    const user = auth.currentUser
+    if (!user) return null
+
+    const userDoc = await getDoc(doc(db, "users", user.uid))
+    if (userDoc.exists()) {
+      return { uid: user.uid, ...userDoc.data() }
     }
-  };
-  
-  // Get current user data
-  export const getCurrentUserData = async () => {
-    const user = auth.currentUser;
-    if (!user) return null;
-    
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      return null;
-    }
-  };
-  
-  // Auth state listener setup
-  export const setupAuthListener = (callback) => {
-    return onAuthStateChanged(auth, callback);
-  };
+    return null
+  } catch (error) {
+    console.error("Error getting user data:", error)
+    return null
+  }
+}
+
+// Setup auth state listener
+export const setupAuthListener = (callback) => {
+  return onAuthStateChanged(auth, callback)
+}
+

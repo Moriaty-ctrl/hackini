@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dashboard - CyberDojo</title>
-    <link rel="stylesheet" href="styles  content="IE=edge">
-    <title>Dashboard - CyberDojo</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/phosphor-icons"></script>
     <style>
@@ -851,6 +849,326 @@
     <script type="module" src="firebase.js"></script>
     <script type="module" src="main.js"></script>
     <script src="ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            firebase.auth().onAuthStateChanged(async function(user) {
+                if (user) {
+                    // User is logged in, fetch user data
+                    try {
+                        const db = firebase.firestore();
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            
+                            // Update user profile in navbar
+                            const userAvatar = document.getElementById('userAvatar');
+                            const userName = document.getElementById('userName');
+                            
+                            if (userAvatar) {
+                                const initials = userData.displayName
+                                    .split(' ')
+                                    .map(name => name.charAt(0))
+                                    .join('')
+                                    .toUpperCase()
+                                    .substring(0, 2);
+                                userAvatar.textContent = initials;
+                            }
+                            
+                            if (userName) {
+                                userName.textContent = userData.displayName;
+                            }
+                            
+                            // Update dashboard title
+                            const dashboardTitle = document.querySelector('.dashboard-title');
+                            if (dashboardTitle) {
+                                dashboardTitle.textContent = `Welcome back, ${userData.displayName.split(' ')[0]}!`;
+                            }
+                            
+                            // Update stats
+                            const completedChallenges = document.querySelector('.stat-value:nth-child(1)');
+                            const pointsEarned = document.querySelector('.stat-value:nth-child(3)');
+                            const badgesUnlocked = document.querySelector('.stat-value:nth-child(5)');
+                            
+                            if (completedChallenges) {
+                                completedChallenges.textContent = userData.challenges?.length || 0;
+                            }
+                            
+                            if (pointsEarned) {
+                                pointsEarned.textContent = userData.score || 0;
+                            }
+                            
+                            if (badgesUnlocked) {
+                                badgesUnlocked.textContent = userData.badges?.length || 0;
+                            }
+                            
+                            // Fetch user's challenges
+                            if (userData.challenges && userData.challenges.length > 0) {
+                                const challengeList = document.querySelector('.challenge-list');
+                                if (challengeList) {
+                                    // Clear existing challenges
+                                    challengeList.innerHTML = '';
+                                    
+                                    // Fetch challenge details for each challenge ID
+                                    const challengePromises = userData.challenges.map(async (challenge) => {
+                                        const challengeDoc = await db.collection('challenges').doc(challenge.id).get();
+                                        if (challengeDoc.exists) {
+                                            return {
+                                                ...challengeDoc.data(),
+                                                id: challengeDoc.id,
+                                                status: challenge.status,
+                                                startedAt: challenge.startedAt,
+                                                completedAt: challenge.completedAt
+                                            };
+                                        }
+                                        return null;
+                                    });
+                                    
+                                    const challenges = (await Promise.all(challengePromises)).filter(Boolean);
+                                    
+                                    // Render challenges
+                                    challenges.forEach(challenge => {
+                                        const isCompleted = challenge.status === 'completed';
+                                        const dateText = isCompleted 
+                                            ? `Completed ${formatDate(challenge.completedAt)}`
+                                            : `Started ${formatDate(challenge.startedAt)}`;
+                                        
+                                        const challengeItem = document.createElement('div');
+                                        challengeItem.className = 'challenge-item';
+                                        challengeItem.innerHTML = `
+                                            <div class="challenge-icon">
+                                                <i class="ph-${isCompleted ? 'check-circle' : 'hourglass'}"></i>
+                                            </div>
+                                            <div class="challenge-info">
+                                                <div class="challenge-name">${challenge.name}</div>
+                                                <div class="challenge-meta">
+                                                    <span><i class="ph-calendar"></i> ${dateText}</span>
+                                                    <span><i class="ph-coin"></i> ${challenge.points} points</span>
+                                                </div>
+                                            </div>
+                                            <div class="challenge-status ${isCompleted ? 'status-completed' : 'status-in-progress'}">
+                                                ${isCompleted ? 'Completed' : 'In Progress'}
+                                            </div>
+                                        `;
+                                        
+                                        challengeList.appendChild(challengeItem);
+                                    });
+                                }
+                            }
+                            
+                            // Fetch user's activity
+                            const activityRef = db.collection('activity')
+                                .where('userId', '==', user.uid)
+                                .orderBy('timestamp', 'desc')
+                                .limit(5);
+                                
+                            const activitySnapshot = await activityRef.get();
+                            const activityList = document.querySelector('.activity-list');
+                            
+                            if (activityList && !activitySnapshot.empty) {
+                                // Clear existing activity
+                                activityList.innerHTML = '';
+                                
+                                activitySnapshot.forEach(doc => {
+                                    const activity = doc.data();
+                                    const activityItem = document.createElement('div');
+                                    activityItem.className = 'activity-item';
+                                    
+                                    let icon = 'activity';
+                                    switch(activity.type) {
+                                        case 'challenge_completed':
+                                            icon = 'check-circle';
+                                            break;
+                                        case 'challenge_started':
+                                            icon = 'play';
+                                            break;
+                                        case 'badge_earned':
+                                            icon = 'medal';
+                                            break;
+                                        case 'kudos_received':
+                                            icon = 'thumbs-up';
+                                            break;
+                                    }
+                                    
+                                    activityItem.innerHTML = `
+                                        <div class="activity-icon">
+                                            <i class="ph-${icon}"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">${activity.title}</div>
+                                            <div class="activity-meta">
+                                                <span><i class="ph-calendar"></i> ${formatDate(activity.timestamp)}</span>
+                                                ${activity.details ? `<span><i class="ph-info"></i> ${activity.details}</span>` : ''}
+                                            </div>
+                                        </div>
+                                    `;
+                                    
+                                    activityList.appendChild(activityItem);
+                                });
+                            }
+                            
+                            // Fetch badges
+                            if (userData.badges && userData.badges.length > 0) {
+                                const badgeGrid = document.querySelector('.badge-grid');
+                                if (badgeGrid) {
+                                    // Clear existing badges
+                                    badgeGrid.innerHTML = '';
+                                    
+                                    // Fetch badge details
+                                    const badgePromises = userData.badges.map(async (badgeId) => {
+                                        const badgeDoc = await db.collection('badges').doc(badgeId).get();
+                                        if (badgeDoc.exists) {
+                                            return {
+                                                ...badgeDoc.data(),
+                                                id: badgeDoc.id
+                                            };
+                                        }
+                                        return null;
+                                    });
+                                    
+                                    const badges = (await Promise.all(badgePromises)).filter(Boolean);
+                                    
+                                    // Render badges
+                                    badges.forEach(badge => {
+                                        const badgeItem = document.createElement('div');
+                                        badgeItem.className = 'badge';
+                                        badgeItem.innerHTML = `
+                                            <div class="badge-icon">
+                                                <i class="ph-${badge.icon || 'medal'}"></i>
+                                            </div>
+                                            <div class="badge-name">${badge.name}</div>
+                                        `;
+                                        
+                                        badgeGrid.appendChild(badgeItem);
+                                    });
+                                }
+                            }
+                            
+                            // Fetch leaderboard
+                            const leaderboardRef = db.collection('users')
+                                .orderBy('score', 'desc')
+                                .limit(5);
+                                
+                            const leaderboardSnapshot = await leaderboardRef.get();
+                            const leaderboardList = document.querySelector('.leaderboard-list');
+                            
+                            if (leaderboardList && !leaderboardSnapshot.empty) {
+                                // Clear existing leaderboard
+                                leaderboardList.innerHTML = '';
+                                
+                                leaderboardSnapshot.forEach((doc, index) => {
+                                    const userData = doc.data();
+                                    const rank = index + 1;
+                                    const isTop = rank <= 3;
+                                    
+                                    const initials = userData.displayName
+                                        .split(' ')
+                                        .map(name => name.charAt(0))
+                                        .join('')
+                                        .toUpperCase()
+                                        .substring(0, 2);
+                                    
+                                    const leaderboardItem = document.createElement('div');
+                                    leaderboardItem.className = 'leaderboard-item';
+                                    leaderboardItem.innerHTML = `
+                                        <div class="leaderboard-rank ${isTop ? 'top' : ''}">${rank}</div>
+                                        <div class="leaderboard-user">
+                                            <div class="leaderboard-avatar">${initials}</div>
+                                            <div class="leaderboard-name">${userData.displayName}</div>
+                                        </div>
+                                        <div class="leaderboard-score">${userData.score}</div>
+                                    `;
+                                    
+                                    leaderboardList.appendChild(leaderboardItem);
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                    }
+                } else {
+                    // User is not logged in, redirect to login page
+                    window.location.href = 'login.html';
+                }
+            });
+            
+            // Helper function to format dates
+            function formatDate(timestamp) {
+                if (!timestamp) return 'recently';
+                
+                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) {
+                    return 'today';
+                } else if (diffDays === 1) {
+                    return 'yesterday';
+                } else if (diffDays < 7) {
+                    return `${diffDays} days ago`;
+                } else if (diffDays < 30) {
+                    const weeks = Math.floor(diffDays / 7);
+                    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+                } else {
+                    const months = Math.floor(diffDays / 30);
+                    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+                }
+            }
+            
+            // Handle logout
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        await firebase.auth().signOut();
+                        window.location.href = 'login.html';
+                    } catch (error) {
+                        console.error('Error signing out:', error);
+                    }
+                });
+            }
+            
+            // Filter buttons for challenges
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.textContent.toLowerCase();
+                    const challengeItems = document.querySelectorAll('.challenge-item');
+                    
+                    challengeItems.forEach(item => {
+                        const status = item.querySelector('.challenge-status').textContent.toLowerCase();
+                        
+                        if (filter === 'all') {
+                            item.style.display = 'flex';
+                        } else if (filter === 'in progress' && status === 'in progress') {
+                            item.style.display = 'flex';
+                        } else if (filter === 'completed' && status === 'completed') {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Time filter buttons
+            const timeBtns = document.querySelectorAll('.time-btn');
+            timeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    timeBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // In a real app, this would fetch data for different time periods
+                    // For now, we'll just simulate the UI interaction
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 

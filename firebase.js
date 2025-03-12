@@ -1,26 +1,24 @@
-// firebase.js
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
+import { getFirestore } from "firebase/firestore"
 
+// Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCy8Me6lEYmaeKfNkOr16BJ17_XOhp2GJc",
-    authDomain: "hackini-394d1.firebaseapp.com",
-    projectId: "hackini-394d1",
-    storageBucket: "hackini-394d1.firebasestorage.app",
-    messagingSenderId: "749500241115",
-    appId: "1:749500241115:web:25ffd9499223be923a68fe",
-    measurementId: "G-7VZS03ZGN5"
-  };
-  
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+}
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+const app = initializeApp(firebaseConfig)
 
-export { app, analytics, auth, db, storage };
+// Initialize Firebase Authentication and get a reference to the service
+export const auth = getAuth(app)
+
+// Initialize Cloud Firestore and get a reference to the service
+export const db = getFirestore(app)
+

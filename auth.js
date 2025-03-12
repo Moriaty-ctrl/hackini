@@ -1,28 +1,26 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"
-import { auth, db } from "./firebase"
+import { auth, db } from "./firebase.js"
+import firebase from "firebase/app"
+import "firebase/firestore"
 
 // Register a new user
-export const registerUser = async (email, password, displayName) => {
+export const registerUser = async (email, password) => {
   try {
     // Create user with email and password
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password)
     const user = userCredential.user
 
     // Add user data to Firestore
-    await setDoc(doc(db, "users", user.uid), {
-      displayName: displayName,
-      email: email,
-      createdAt: serverTimestamp(),
-      score: 0,
-      challenges: [],
-      badges: [],
-    })
-
-    // Update profile display name
-    await user.updateProfile({
-      displayName: displayName,
-    })
+    await db
+      .collection("users")
+      .doc(user.uid)
+      .set({
+        displayName: email.split("@")[0], // Default display name from email
+        email: email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        score: 0,
+        challenges: [],
+        badges: [],
+      })
 
     return { success: true, user }
   } catch (error) {
@@ -35,7 +33,7 @@ export const registerUser = async (email, password, displayName) => {
 export const loginUser = async (email, password) => {
   console.log("Login attempt with:", email)
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    const userCredential = await auth.signInWithEmailAndPassword(email, password)
     console.log("Login successful:", userCredential.user.uid)
     return { success: true, user: userCredential.user }
   } catch (error) {
@@ -47,7 +45,7 @@ export const loginUser = async (email, password) => {
 // Logout user
 export const logoutUser = async () => {
   try {
-    await signOut(auth)
+    await auth.signOut()
     return { success: true }
   } catch (error) {
     console.error("Logout error:", error.code, error.message)
@@ -61,8 +59,8 @@ export const getCurrentUserData = async () => {
     const user = auth.currentUser
     if (!user) return null
 
-    const userDoc = await getDoc(doc(db, "users", user.uid))
-    if (userDoc.exists()) {
+    const userDoc = await db.collection("users").doc(user.uid).get()
+    if (userDoc.exists) {
       return { uid: user.uid, ...userDoc.data() }
     }
     return null
@@ -74,6 +72,6 @@ export const getCurrentUserData = async () => {
 
 // Setup auth state listener
 export const setupAuthListener = (callback) => {
-  return onAuthStateChanged(auth, callback)
+  return auth.onAuthStateChanged(callback)
 }
 

@@ -585,151 +585,147 @@
     
     <!-- Scripts -->
     <script type="module" src="firebase.js"></script>
-    <script type="module" src="main.js"></script>
-    <script src="ui.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab switching
-            const tabs = document.querySelectorAll('.login-tab');
-            const forms = document.querySelectorAll('.login-form');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Remove active class from all tabs and forms
-                    tabs.forEach(t => t.classList.remove('active'));
-                    forms.forEach(f => f.classList.remove('active'));
-                    
-                    // Add active class to clicked tab and corresponding form
-                    this.classList.add('active');
-                    document.getElementById(`${tabId}-form`).classList.add('active');
-                });
-            });
-            
-            // Login functionality
-            const loginSubmit = document.getElementById('loginSubmit');
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            
-            loginSubmit?.addEventListener('click', async function() {
-                const email = emailInput?.value;
-                const password = passwordInput?.value;
-                
-                if (!email || !password) {
-                    showAuthStatus('Please enter both email and password', false);
-                    return;
-                }
-                
-                try {
-                    // Use Firebase authentication
-                    const auth = firebase.auth();
-                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                    
-                    showAuthStatus('Login successful! Redirecting...', true);
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } catch (error) {
-                    console.error("Login error:", error);
-                    showAuthStatus('Login failed: ' + (error.message || 'Unknown error'), false);
-                }
-            });
-            
-            // Register functionality
-            const registerBtn = document.getElementById('registerBtn');
-            const regNameInput = document.getElementById('reg-name');
-            const regEmailInput = document.getElementById('reg-email');
-            const regPasswordInput = document.getElementById('reg-password');
-            const regConfirmPasswordInput = document.getElementById('reg-confirm-password');
-            const termsCheckbox = document.getElementById('terms');
-            
-            registerBtn?.addEventListener('click', async function() {
-                const username = regNameInput.value;
-                const email = regEmailInput.value;
-                const password = regPasswordInput.value;
-                const confirmPassword = regConfirmPasswordInput.value;
-                const termsAccepted = termsCheckbox.checked;
-                
-                // Validation
-                if (!username || !email || !password || !confirmPassword) {
-                    showAuthStatus('Please fill in all fields', false);
-                    return;
-                }
-                
-                if (password !== confirmPassword) {
-                    showAuthStatus('Passwords do not match', false);
-                    return;
-                }
-                
-                if (!termsAccepted) {
-                    showAuthStatus('Please accept the terms and conditions', false);
-                    return;
-                }
-                
-                try {
-                    // Use Firebase authentication
-                    const auth = firebase.auth();
-                    const db = firebase.firestore();
-                    
-                    // Create user with email and password
-                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                    const user = userCredential.user;
-                    
-                    // Add user data to Firestore
-                    await db.collection('users').doc(user.uid).set({
-                        displayName: username,
-                        email: email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        score: 0,
-                        challenges: [],
-                        badges: []
-                    });
-                    
-                    // Update profile display name
-                    await user.updateProfile({
-                        displayName: username
-                    });
-                    
-                    showAuthStatus('Registration successful! Redirecting...', true);
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                } catch (error) {
-                    console.error('Registration error:', error);
-                    showAuthStatus('Registration failed: ' + (error.message || 'Unknown error'), false);
-                }
-            });
-            
-            // Show auth status message
-            function showAuthStatus(message, isSuccess) {
-                const authStatus = document.getElementById('auth-status');
-                authStatus.textContent = message;
-                authStatus.style.display = 'block';
-                
-                if (isSuccess) {
-                    authStatus.className = 'auth-success';
-                } else {
-                    authStatus.className = 'auth-error';
-                }
-                
-                // Hide message after 3 seconds if not success
-                if (!isSuccess) {
-                    setTimeout(() => {
-                        authStatus.style.display = 'none';
-                    }, 3000);
-                }
-            }
-            
-            // Check if user is already logged in
-            firebase.auth().onAuthStateChanged(function(user) {
-                if (user) {
-                    // User is signed in, redirect to dashboard
-                    window.location.href = 'dashboard.html';
-                }
-            });
-        });
-    </script>
+    <script type="module" src="auth.js"></script>
+    <script type="module">
+    import { loginUser, registerUser } from './auth.js';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab switching
+      const tabs = document.querySelectorAll('.login-tab');
+      const forms = document.querySelectorAll('.login-form');
+      
+      tabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+              const tabId = this.getAttribute('data-tab');
+              
+              // Remove active class from all tabs and forms
+              tabs.forEach(t => t.classList.remove('active'));
+              forms.forEach(f => f.classList.remove('active'));
+              
+              // Add active class to clicked tab and corresponding form
+              this.classList.add('active');
+              document.getElementById(`${tabId}-form`).classList.add('active');
+          });
+      });
+      
+      // Login functionality
+      const loginSubmit = document.getElementById('loginSubmit');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      
+      loginSubmit?.addEventListener('click', async function() {
+          const email = emailInput?.value;
+          const password = passwordInput?.value;
+          
+          if (!email || !password) {
+              showAuthStatus('Please enter both email and password', false);
+              return;
+          }
+          
+          try {
+              const result = await loginUser(email, password);
+              
+              if (result.success) {
+                  showAuthStatus('Login successful! Redirecting...', true);
+                  setTimeout(() => {
+                      window.location.href = 'dashboard.html';
+                  }, 1500);
+              } else {
+                  showAuthStatus('Login failed: ' + (result.error || 'Unknown error'), false);
+              }
+          } catch (error) {
+              console.error("Login error:", error);
+              showAuthStatus('Login failed: ' + (error.message || 'Unknown error'), false);
+          }
+      });
+      
+      // Register functionality
+      const registerBtn = document.getElementById('registerBtn');
+      const regNameInput = document.getElementById('reg-name');
+      const regEmailInput = document.getElementById('reg-email');
+      const regPasswordInput = document.getElementById('reg-password');
+      const regConfirmPasswordInput = document.getElementById('reg-confirm-password');
+      const termsCheckbox = document.getElementById('terms');
+      
+      registerBtn?.addEventListener('click', async function() {
+          const username = regNameInput.value;
+          const email = regEmailInput.value;
+          const password = regPasswordInput.value;
+          const confirmPassword = regConfirmPasswordInput.value;
+          const termsAccepted = termsCheckbox.checked;
+          
+          // Validation
+          if (!username || !email || !password || !confirmPassword) {
+              showAuthStatus('Please fill in all fields', false);
+              return;
+          }
+          
+          if (password !== confirmPassword) {
+              showAuthStatus('Passwords do not match', false);
+              return;
+          }
+          
+          if (!termsAccepted) {
+              showAuthStatus('Please accept the terms and conditions', false);
+              return;
+          }
+          
+          try {
+              const result = await registerUser(email, password);
+              
+              if (result.success) {
+                  // Update display name
+                  await result.user.updateProfile({
+                      displayName: username
+                  });
+                  
+                  // Update Firestore document
+                  await firebase.firestore().collection('users').doc(result.user.uid).update({
+                      displayName: username
+                  });
+                  
+                  showAuthStatus('Registration successful! Redirecting...', true);
+                  setTimeout(() => {
+                      window.location.href = 'dashboard.html';
+                  }, 1500);
+              } else {
+                  showAuthStatus('Registration failed: ' + (result.error || 'Unknown error'), false);
+              }
+          } catch (error) {
+              console.error('Registration error:', error);
+              showAuthStatus('Registration failed: ' + (error.message || 'Unknown error'), false);
+          }
+      });
+      
+      // Show auth status message
+      function showAuthStatus(message, isSuccess) {
+          const authStatus = document.getElementById('auth-status');
+          authStatus.textContent = message;
+          authStatus.style.display = 'block';
+          
+          if (isSuccess) {
+              authStatus.className = 'auth-success';
+          } else {
+              authStatus.className = 'auth-error';
+          }
+          
+          // Hide message after 3 seconds if not success
+          if (!isSuccess) {
+              setTimeout(() => {
+                  authStatus.style.display = 'none';
+              }, 3000);
+          }
+      }
+      
+      // Check if user is already logged in
+      firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+              // User is signed in, redirect to dashboard
+              window.location.href = 'dashboard.html';
+          }
+      });
+    });
+  </script>
 </body>
 </html>
 
